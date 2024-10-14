@@ -1,11 +1,17 @@
 import HomePage from "../pages/HomePage/HomePage"
-export const routes=[
+import CoursePage from "../pages/CoursePage/CoursePage"
+export const routes = [
     {
-        path:'/',
+        path: '/',
         page: HomePage
     },
     {
-        path:'/demopage',
+        path: '/homepage',
         page: HomePage
+    },
+    {
+        path: '/coursepage',
+        page: CoursePage
     }
+
 ]
