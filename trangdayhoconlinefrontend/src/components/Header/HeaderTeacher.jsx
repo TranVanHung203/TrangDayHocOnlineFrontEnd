@@ -28,9 +28,9 @@ const Header = () => {
           <img src={profilePic} alt="Không tìm thấy logo" className="logo" />
         </div>
         <nav className="nav-links">
-          <a href="#home">Trang chủ</a>
-          <a href="#dashboard">Tạo khóa học mới</a>
-          <a href="#courses">Các khoá học của tôi</a>
+          <a href="/homepage">Trang chủ</a>
+          <a href="/createcourse">Tạo khóa học mới</a>
+          <a href="/mycourses">Các khoá học của tôi</a>
         </nav>
       </div>
     </header>
