@@ -1,10 +1,11 @@
 import HomePage from "../pages/HomePage/HomePage"
 import CoursePage from "../pages/CoursePage/CoursePage"
-import HeaderAdmin from "../components/Header/HeaderAdmin"
+import OverviewMyCourse from "../pages/HomePage/OverviewMyCourse"
+import CreateCourse from "../pages/TeacherPage/CreateCourse"
 export const routes = [
     {
-        path: '/',
-        page: HeaderAdmin
+        path: '/mycourses',
+        page: OverviewMyCourse
     },
     {
         path: '/homepage',
@@ -13,6 +14,10 @@ export const routes = [
     {
         path: '/coursepage',
         page: CoursePage
+    },
+    {
+        path: '/createcourse',
+        page: CreateCourse
     }
 
 ]
