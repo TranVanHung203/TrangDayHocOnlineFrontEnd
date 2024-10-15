@@ -2,7 +2,7 @@ import React from "react";
 
 const CoursePage = () => {
     return (
-        <div>CoursePage here</div>
+        <div>CoursePage</div>
     )
 }
 export default CoursePage

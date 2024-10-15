@@ -1,9 +1,10 @@
 import HomePage from "../pages/HomePage/HomePage"
 import CoursePage from "../pages/CoursePage/CoursePage"
+import HeaderAdmin from "../components/Header/HeaderAdmin"
 export const routes = [
     {
         path: '/',
-        page: HomePage
+        page: HeaderAdmin
     },
     {
         path: '/homepage',
