@@ -7,25 +7,26 @@ import "../../css/CoursesOverview.css";
 import editlogo from '../../storage/edit.png';
 
 const DEFAULT_IMAGE_URL = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhk12AaBiZxtAClRZQ_N0Bm6mIB6RAJHOJ5A&s';
-
-// Khởi tạo RestClient bên ngoài component để không tạo lại mỗi lần render
 const client = new RestClient().service('courses');
 
 const CoursesOverview = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState('lastAccessed');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const [itemsPerPage, setItemsPerPage] = useState(() =>
+    localStorage.getItem('itemsPerPage') ? parseInt(localStorage.getItem('itemsPerPage'), 10) : 9
+  );
   const [courses, setCourses] = useState([]);
   const [role, setRole] = useState('');
-  const navigate = useNavigate();
+  const [totalCourses, setTotalCourses] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const currentUserId = 'giangVien1';
-
-  const fetchCourses = useCallback(async () => {
+  const fetchCourses = useCallback(async (page, limit) => {
     try {
-      const data = await client.find(); // Gọi API một lần khi component load
+      const data = await client.find({ page, limit });
       setRole(data.role);
+      setTotalCourses(data.totalCourses);
+      setTotalPages(data.totalPages);
 
       const formattedCourses = data.courses.map(course => ({
         ...course,
@@ -34,7 +35,6 @@ const CoursesOverview = () => {
         maKhoaHoc: course._id,
         imageUrl: DEFAULT_IMAGE_URL,
       }));
-
       setCourses(formattedCourses);
     } catch (error) {
       console.error('Error fetching courses:', error);
@@ -42,18 +42,28 @@ const CoursesOverview = () => {
   }, []);
 
   useEffect(() => {
-    fetchCourses(); // Chỉ gọi một lần khi component được mount
-  }, [fetchCourses]);
+    fetchCourses(currentPage, itemsPerPage);
+  }, [fetchCourses, currentPage, itemsPerPage]);
+
+  const handleItemsPerPageChange = (e) => {
+    const newItemsPerPage = parseInt(e.target.value, 10);
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
+    localStorage.setItem('itemsPerPage', newItemsPerPage);
+  };
 
   const filteredCourses = courses.filter(course =>
     course.tenKhoaHoc.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentCourses = filteredCourses.slice(startIndex, startIndex + itemsPerPage);
+  // Hàm chuyển hướng đến trang chi tiết khóa học
+  const handleCourseClick = (maKhoaHoc) => {
+    navigate(`/mycourses/coursedetails/${maKhoaHoc}`);
+  };
 
-  const handleEditClick = (maKhoaHoc) => {
+  // Hàm chuyển hướng đến trang chỉnh sửa khóa học
+  const handleEditClick = (maKhoaHoc, event) => {
+    event.stopPropagation(); // Ngăn sự kiện click vào thẻ khóa học
     navigate(`/updatecourses/load-course/${maKhoaHoc}`);
   };
 
@@ -63,26 +73,33 @@ const CoursesOverview = () => {
 
       <h2>Các khóa học hiện tại</h2>
       <div className="filters">
-        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-          <option value="lastAccessed">Sort by last accessed</option>
-          <option value="progress">Sort by progress</option>
-        </select>
         <input
           type="text"
           placeholder="Tìm kiếm"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+        <select value={itemsPerPage} onChange={handleItemsPerPageChange}>
+          <option value="3">3 items per page</option>
+          <option value="6">6 items per page</option>
+          <option value="9">9 items per page</option>
+        </select>
       </div>
       <div className="courses-grid">
-        {currentCourses.map((course, index) => (
-          <div key={index} className="course-card" style={{ position: 'relative' }}>
+        {filteredCourses.map((course, index) => (
+          <div
+            key={index}
+            className="course-card"
+            onClick={() => handleCourseClick(course.maKhoaHoc)} // Nhấn vào thẻ sẽ vào trang chi tiết
+            style={{ position: 'relative', cursor: 'pointer' }}
+          >
             <img src={course.imageUrl} alt={course.tenKhoaHoc} className="course-image" />
             <h3>{course.tenKhoaHoc}</h3>
             <p>{course.moTa}</p>
-            {course.maGiangVien === currentUserId && (
+            {role === 'Lecturer' && (
               <button
                 className="edit-icon"
+                onClick={(event) => handleEditClick(course.maKhoaHoc, event)} // Nhấn vào biểu tượng Edit sẽ vào trang chỉnh sửa
                 style={{
                   position: 'absolute',
                   top: '10px',
@@ -91,7 +108,6 @@ const CoursesOverview = () => {
                   border: 'none',
                   cursor: 'pointer',
                 }}
-                onClick={() => handleEditClick(course.maKhoaHoc)}
               >
                 <img src={editlogo} alt="Edit" className="logo" style={{ width: '24px', height: '24px', marginTop: '4px' }} />
               </button>

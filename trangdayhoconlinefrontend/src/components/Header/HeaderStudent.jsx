@@ -34,7 +34,7 @@ const Header = () => {
         </div>
         <nav className="nav-links">
           <a href="/mycourses">Các khoá học của tôi</a>
-          <a href="/createcourse">Tạo khóa học mới</a>
+          <a href="/timeline">Các hạn bài kiểm tra</a>
         </nav>
       </div>
     </header>
