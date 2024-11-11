@@ -1,17 +1,23 @@
 import HomePage from "../pages/HomePage/HomePage"
 import CoursePage from "../pages/CoursePage/CoursePage"
+import CreateCourse from "../pages/TeacherPage/CreateCourse"
+import LoadEditCourse from "../pages/TeacherPage/EditCourse"
 export const routes = [
     {
-        path: '/',
-        page: HomePage
-    },
-    {
-        path: '/homepage',
+        path: '/mycourses',
         page: HomePage
     },
     {
         path: '/coursepage',
         page: CoursePage
-    }
+    },
+    {
+        path: '/createcourse',
+        page: CreateCourse
+    },
+    {
+        path: '/updatecourses/load-course/:courseId',  // Đường dẫn dynamic với :courseId
+        page: LoadEditCourse  // Giả sử bạn có trang UpdateCourse để xử lý cập nhật khóa học
+      }
 
 ]

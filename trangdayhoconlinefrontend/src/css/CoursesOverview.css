@@ -1,0 +1,107 @@
+.courses-overview {
+    padding: 20px;
+    background-color: #f5f7fa; /* Light background */
+  }
+  
+  h2 {
+    margin-bottom: 20px;
+  }
+  
+  .filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: flex-start; /* Căn lề bên trái cho các ô */
+  }
+  
+  .filters input,
+  .filters select {
+    padding: 8px; /* Điều chỉnh padding cho nhỏ lại */
+    border-radius: 4px;
+    border: 1px solid #ddd;
+  }
+  
+  .filters select {
+    width: 170px; /* Đặt kích thước riêng cho ô sort */
+  }
+  
+  .filters input {
+    max-width: 800px; /* Đảm bảo không vượt quá chiều rộng này */
+  }
+  
+  .filters button {
+    padding: 8px 12px; /* Điều chỉnh kích thước nút */
+    border-radius: 4px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .filters button:hover {
+    background-color: #218838;
+  }
+  
+  .courses-grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .course-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 300px;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .course-card img.course-image {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  
+  .course-card h3 {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  
+  .course-card p {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .pagination {
+    margin-top: 20px;
+  }
+  
+  .pagination button {
+    margin: 0 5px;
+    padding: 10px 15px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .pagination button.active {
+    background-color: #0056b3;
+  }
+  
+  .pagination button:hover {
+    background-color: #0056b3;
+  }
+  
+  .edit-icon {
+    background: none;
+    border: none;
+    color: blue;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
