@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios'; // Import axios
 import "../../css/CreateCourse.css"; // Import CSS
 import Header from '../../components/Header/HeaderTeacher';
 
@@ -26,11 +27,17 @@ const CourseForm = () => {
   const handleKeyDown = (e) => {
     if ((e.key === 'Enter' || e.key === ',') && emailInput.trim()) {
       e.preventDefault();
-      setCourseData({
-        ...courseData,
-        studentEmails: [...courseData.studentEmails, emailInput.trim()], // Thêm email mới vào mảng
-      });
-      setEmailInput(''); // Reset lại ô input
+
+      // Kiểm tra email đã tồn tại trong mảng studentEmails chưa
+      if (!courseData.studentEmails.includes(emailInput.trim())) {
+        setCourseData({
+          ...courseData,
+          studentEmails: [...courseData.studentEmails, emailInput.trim()], // Thêm email mới vào mảng
+        });
+        setEmailInput(''); // Reset lại ô input
+      } else {
+        alert('Email đã tồn tại trong danh sách sinh viên!'); // Thông báo nếu email đã tồn tại
+      }
     }
   };
 
@@ -44,9 +51,28 @@ const CourseForm = () => {
   };
 
   // Hàm xử lý khi gửi form
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(courseData);
+
+    try {
+      // Gửi dữ liệu khóa học tới backend
+      const response = await axios.post('http://localhost:5000/courses/create', courseData);
+
+      // Nếu thành công, bạn có thể thông báo cho người dùng hoặc redirect họ đến trang khác
+      console.log('Course created successfully:', response.data);
+      alert('Course created successfully!');
+      setCourseData({
+        courseName: '',
+        description: '',
+        startDate: '',
+        endDate: '',
+        instructorId: '',
+        studentEmails: [],
+      }); // Reset form sau khi submit
+    } catch (error) {
+      console.error('Error creating course:', error);
+      alert('There was an error creating the course. Please try again.');
+    }
   };
 
   return (

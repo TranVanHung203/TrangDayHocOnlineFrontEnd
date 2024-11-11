@@ -1,72 +1,66 @@
-import React, { useState } from 'react';
-import HeaderAdmin from '../../components/Header/HeaderTeacher';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import RestClient from '../../client-api/rest-client.js';
+import HeaderTeacher from '../../components/Header/HeaderTeacher';
+import HeaderStudent from '../../components/Header/HeaderStudent';
 import "../../css/CoursesOverview.css";
 import editlogo from '../../storage/edit.png';
+
+const DEFAULT_IMAGE_URL = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhk12AaBiZxtAClRZQ_N0Bm6mIB6RAJHOJ5A&s';
+
+// Khởi tạo RestClient bên ngoài component để không tạo lại mỗi lần render
+const client = new RestClient().service('courses');
 
 const CoursesOverview = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('lastAccessed');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+  const [courses, setCourses] = useState([]);
+  const [role, setRole] = useState('');
+  const navigate = useNavigate();
 
-  // Giả định vai trò người dùng và ID người dùng hiện tại
-  const role = 'Teacher';
-  const currentUserId = 'giangVien1'; // ID của người dùng đang đăng nhập
+  const currentUserId = 'giangVien1';
 
-  // Dữ liệu kiểm tra
-  const courses = [
-    {
-      tenKhoaHoc: 'Khóa học lập trình JavaScript',
-      moTa: 'Khóa học cơ bản về JavaScript cho người mới bắt đầu.',
-      ngayBatDau: new Date(),
-      ngayKetThuc: new Date(new Date().getTime() + 604800000), // 1 tuần sau
-      maGiangVien: 'giangVien1',
-      taiLieu: ['taiLieu1', 'taiLieu2'],
-      quizzes: ['quiz1'],
-      enrolledUsers: ['user1', 'user2'],
-      imageUrl: 'https://scontent.fhan4-1.fna.fbcdn.net/v/t39.30808-6/270630319_646138706802110_9013562198811924589_n.jpg?stp=dst-jpg_s960x960&_nc_cat=105&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=DkGq1qGHV98Q7kNvgHX_aAK&_nc_ht=scontent.fhan4-1.fna&_nc_gid=AnN9nDnDG0-hxZUJ2df9hAO&oh=00_AYDdnCBav0Xlqq3UsCBNGaHqDdhiLjfp-DLIhmBkumammg&oe=6713D990',
-      progress: '50%'
-    },
-    {
-      tenKhoaHoc: 'Khóa học lập trình Python',
-      moTa: 'Khóa học cơ bản về Python cho người mới bắt đầu.',
-      ngayBatDau: new Date(),
-      ngayKetThuc: new Date(new Date().getTime() + 604800000), // 1 tuần sau
-      maGiangVien: 'giangVien2',
-      taiLieu: ['taiLieu3', 'taiLieu4'],
-      quizzes: ['quiz2'],
-      enrolledUsers: ['user1'],
-      imageUrl: 'https://scontent.fhan4-1.fna.fbcdn.net/v/t39.30808-6/270630319_646138706802110_9013562198811924589_n.jpg?stp=dst-jpg_s960x960&_nc_cat=105&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=DkGq1qGHV98Q7kNvgHX_aAK&_nc_ht=scontent.fhan4-1.fna&_nc_gid=AnN9nDnDG0-hxZUJ2df9hAO&oh=00_AYDdnCBav0Xlqq3UsCBNGaHqDdhiLjfp-DLIhmBkumammg&oe=6713D990',
-      progress: '30%'
-    },
-    {
-      tenKhoaHoc: 'Khóa học thiết kế web',
-      moTa: 'Khóa học về thiết kế giao diện web với HTML và CSS.',
-      ngayBatDau: new Date(),
-      ngayKetThuc: new Date(new Date().getTime() + 604800000), // 1 tuần sau
-      maGiangVien: 'giangVien3',
-      taiLieu: ['taiLieu5', 'taiLieu6'],
-      quizzes: ['quiz3'],
-      enrolledUsers: ['user2', 'user3'],
-      imageUrl: 'https://scontent.fhan4-1.fna.fbcdn.net/v/t39.30808-6/270630319_646138706802110_9013562198811924589_n.jpg?stp=dst-jpg_s960x960&_nc_cat=105&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=DkGq1qGHV98Q7kNvgHX_aAK&_nc_ht=scontent.fhan4-1.fna&_nc_gid=AnN9nDnDG0-hxZUJ2df9hAO&oh=00_AYDdnCBav0Xlqq3UsCBNGaHqDdhiLjfp-DLIhmBkumammg&oe=6713D990',
-      progress: '70%'
+  const fetchCourses = useCallback(async () => {
+    try {
+      const data = await client.find(); // Gọi API một lần khi component load
+      setRole(data.role);
+
+      const formattedCourses = data.courses.map(course => ({
+        ...course,
+        tenKhoaHoc: course.name,
+        moTa: course.description,
+        maKhoaHoc: course._id,
+        imageUrl: DEFAULT_IMAGE_URL,
+      }));
+
+      setCourses(formattedCourses);
+    } catch (error) {
+      console.error('Error fetching courses:', error);
     }
-  ];
+  }, []);
+
+  useEffect(() => {
+    fetchCourses(); // Chỉ gọi một lần khi component được mount
+  }, [fetchCourses]);
 
   const filteredCourses = courses.filter(course =>
     course.tenKhoaHoc.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Tính toán số trang
   const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
-
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentCourses = filteredCourses.slice(startIndex, startIndex + itemsPerPage);
 
+  const handleEditClick = (maKhoaHoc) => {
+    navigate(`/updatecourses/load-course/${maKhoaHoc}`);
+  };
+
   return (
     <div className="courses-overview">
-      {role === 'Teacher' && <HeaderAdmin />}
-      
+      {role === 'Lecturer' ? <HeaderTeacher /> : <HeaderStudent />}
+
       <h2>Các khóa học hiện tại</h2>
       <div className="filters">
         <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
@@ -86,27 +80,20 @@ const CoursesOverview = () => {
             <img src={course.imageUrl} alt={course.tenKhoaHoc} className="course-image" />
             <h3>{course.tenKhoaHoc}</h3>
             <p>{course.moTa}</p>
-            <p>{course.progress} complete</p>
-            {/* Kiểm tra xem người dùng có trong danh sách enrolledUsers không */}
-            {course.maGiangVien.includes(currentUserId) && (
-              <button 
-                className="edit-icon" 
-                style={{ 
-                  position: 'absolute', 
-                  top: '10px', 
-                  right: '10px', 
-                  background: 'none', 
-                  border: 'none', 
-                  cursor: 'pointer' 
+            {course.maGiangVien === currentUserId && (
+              <button
+                className="edit-icon"
+                style={{
+                  position: 'absolute',
+                  top: '10px',
+                  right: '10px',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
                 }}
-                onClick={() => alert('Edit course')} // Thay đổi hành động tùy ý
+                onClick={() => handleEditClick(course.maKhoaHoc)}
               >
-                {/* Hình ảnh cây bút */}
-             
-                  <img src={editlogo} alt="Không tìm thấy logo" className="logo" style={{ width: '24px', height: '24px' ,marginTop: '4px'}} />
-               
-                  
-                
+                <img src={editlogo} alt="Edit" className="logo" style={{ width: '24px', height: '24px', marginTop: '4px' }} />
               </button>
             )}
           </div>
@@ -114,9 +101,9 @@ const CoursesOverview = () => {
       </div>
       <div className="pagination">
         {Array.from({ length: totalPages }, (_, index) => (
-          <button 
-            key={index} 
-            onClick={() => setCurrentPage(index + 1)} 
+          <button
+            key={index}
+            onClick={() => setCurrentPage(index + 1)}
             className={currentPage === index + 1 ? 'active' : ''}
           >
             {index + 1}
