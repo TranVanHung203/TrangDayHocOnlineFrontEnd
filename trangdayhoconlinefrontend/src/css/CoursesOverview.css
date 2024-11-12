@@ -22,7 +22,8 @@
   }
   
   .filters select {
-    width: 170px; /* Đặt kích thước riêng cho ô sort */
+    width: 150px; /* Đặt kích thước riêng cho ô sort */
+    height: 50px;
   }
   
   .filters input {
