@@ -3,6 +3,7 @@ import CoursePage from "../pages/CoursePage/CoursePage"
 import CreateCourse from "../pages/TeacherPage/CreateCourse"
 import LoadEditCourse from "../pages/TeacherPage/EditCourse"
 import OverViewExamPage from "../pages/StudentPage/OverViewExamPage"
+import Quiz from "../pages/StudentPage/Quiz"
 export const routes = [
     {
         path: '/mycourses',
@@ -21,8 +22,12 @@ export const routes = [
         page: LoadEditCourse  // Giả sử bạn có trang UpdateCourse để xử lý cập nhật khóa học
     },
     {
-        path: '/quizzes',
+        path: '/quizzes/:quizid',
         page: OverViewExamPage
+    },
+    {
+        path: '/quizzes/start/:quizid',
+        page: Quiz
     },
 
 ]

@@ -31,6 +31,23 @@ class RestClient {
         }
     }
 
+    async findById(id) {
+        try {
+            const url = new URL(`${this.baseUrl}/${this.path}/${id}`);
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching data by ID:', error);
+        }
+    }
+
     async create(data) {
         try {
             const response = await fetch(`${this.baseUrl}/${this.path}`, {
@@ -62,5 +79,23 @@ class RestClient {
             console.error('Error updating data:', error);
         }
     }
+
+    // Thêm phương thức mới để nộp bài kiểm tra
+    async submitQuiz(data) {
+        try {
+            const response = await fetch(`${this.baseUrl}/${this.path}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify(data)
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Error submitting quiz:', error);
+        }
+    }
 }
+
 export default RestClient;
