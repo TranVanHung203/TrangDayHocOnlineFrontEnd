@@ -97,22 +97,23 @@ const QuizOverview = () => {
           <p><strong>Minimum Pass Score:</strong> {quizData.min_pass_score}</p>
           <p><strong>Start Deadline:</strong> {startDeadline}</p>
           <p><strong>End Deadline:</strong> {endDeadline}</p>
-          <p><strong>Status:</strong> {quizData.score && quizData.attemptTime ? 'Completed' : 'Not Attempted'}</p>
-        </div>
-        {quizData.score && quizData.attemptTime ? (
-          <>
+          <p><strong>Status:</strong> {quizData.attemptTime != null ? 'Completed' : 'Not Attempted'}</p>
+          {quizData.attemptTime != null && (
+            <p><strong>Date and Time:</strong> {new Date(new Date(quizData.attemptTime).getTime() - 7 * 60 * 60 * 1000).toLocaleString()}</p>
+          )}
+          {quizData.attemptTime != null && (
             <p><strong>Score:</strong> {quizData.score}</p>
-            <p><strong>Last Attempt Time:</strong> {new Date(quizData.attemptTime).toLocaleString("vi-VN", { hour12: false })}</p>
-          </>
-        ) : (
-          <button
-            className={`start-btn ${!isAvailable ? 'disabled' : ''}`}
-            disabled={!isAvailable}
-            onClick={handleStartQuiz} // Gọi hàm khi nhấn nút
-          >
-            {isAvailable ? 'Start Quiz' : 'Quiz Time Not Available'}
-          </button>
-        )}
+          )}
+        </div>
+
+        {/* Nếu đã hoàn thành, làm mờ và vô hiệu nút Start */}
+        <button
+          className={`start-btn ${(!isAvailable || quizData.attemptTime) ? 'disabled' : ''}`}
+          disabled={!isAvailable || quizData.attemptTime}
+          onClick={handleStartQuiz}
+        >
+          {quizData.attemptTime ? 'Completed' : (isAvailable ? 'Start Quiz' : 'Quiz Time Not Available')}
+        </button>
       </div>
     </div>
   );

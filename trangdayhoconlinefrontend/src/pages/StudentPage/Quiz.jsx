@@ -9,10 +9,12 @@ const Quiz = () => {
   const [answeredQuestions, setAnsweredQuestions] = useState([]);
   const [timeLeft, setTimeLeft] = useState(0);
   const [isTimeUp, setIsTimeUp] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [loadError, setLoadError] = useState(null); // Thêm trạng thái để kiểm tra lỗi tải
   const questionRefs = useRef([]);
 
   const quizId = window.location.href.split('/').pop();
-  const totalSeconds = quizData ? quizData.number * 60 : 0;
 
   useEffect(() => {
     const restClient = new RestClient();
@@ -20,28 +22,40 @@ const Quiz = () => {
       .findById(quizId)
       .then((data) => {
         setQuizData(data);
-        setTimeLeft(data.number * 60);
+
+        // Nếu không có thời gian kết thúc đã lưu, tạo mới
+        if (!localStorage.getItem('quizEndTime')) {
+          const endTime = Date.now() + data.number * 60 * 1000;
+          localStorage.setItem('quizEndTime', endTime);
+        }
       })
-      .catch((error) => console.error('Error fetching quiz data:', error));
+      .catch((error) => {
+        console.error('Error fetching quiz data:', error);
+        setLoadError('Không thể tải dữ liệu câu hỏi. Vui lòng thử lại sau.'); // Đặt thông báo lỗi
+      });
   }, [quizId]);
 
   useEffect(() => {
-    if (quizData && totalSeconds > 0) {
-      let countdown = setInterval(() => {
-        setTimeLeft((prevTime) => {
-          if (prevTime <= 1) {
-            clearInterval(countdown);
-            setIsTimeUp(true);
-            handleSubmit();
-            return 0;
-          }
-          return prevTime - 1;
-        });
-      }, 1000);
+    const updateTimer = () => {
+      const endTime = parseInt(localStorage.getItem('quizEndTime'), 10);
+      const remainingTime = Math.max(0, endTime - Date.now());
 
-      return () => clearInterval(countdown);
-    }
-  }, [quizData, totalSeconds]);
+      if (remainingTime <= 0) {
+        setIsTimeUp(true);
+        setTimeLeft(0);
+        if (!hasSubmitted && !isSubmitting && quizData) {
+          handleSubmit();
+        }
+      } else {
+        setTimeLeft(Math.floor(remainingTime / 1000));
+      }
+    };
+
+    updateTimer();
+    const countdown = setInterval(updateTimer, 1000);
+
+    return () => clearInterval(countdown);
+  }, [isSubmitting, hasSubmitted, quizData]);
 
   const formatTime = (seconds) => {
     const minutes = String(Math.floor(seconds / 60)).padStart(2, '0');
@@ -74,11 +88,50 @@ const Quiz = () => {
     questionRefs.current[index].scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleSubmit = () => {
-    console.log('Selected Answers:', selectedAnswers);
-    console.log('Flagged Questions:', flaggedQuestions);
-    alert('Quiz submitted!');
+  const handleSubmit = async () => {
+    if (isSubmitting || hasSubmitted || !quizData || !quizData.questions) return;
+
+    setIsSubmitting(true);
+    setHasSubmitted(true);
+
+    const restClient = new RestClient();
+    let startTime = localStorage.getItem('startTime');
+
+    if (startTime) {
+      const startDate = new Date(startTime);
+      startDate.setHours(startDate.getHours() + 7);
+      startTime = startDate.toISOString();
+    }
+
+    const answers = quizData.questions.map((question) => ({
+      questionId: question.questionId,
+      answerId: selectedAnswers[question.questionId] || ""
+    }));
+
+    const submissionData = {
+      answers,
+      startTime
+    };
+
+    try {
+      // Perform the POST request to submit the quiz
+      await restClient.service(`quizzes/submit/${quizId}`).submitQuiz(submissionData);
+
+      // After successful POST request, clear localStorage
+      localStorage.clear(); // This will remove all keys from localStorage
+
+      // Redirect to the quiz result or summary page
+      window.location.href = `http://localhost:3000/quizzes/${quizId}`;
+    } catch (error) {
+      console.error('Error submitting quiz:', error);
+      setIsSubmitting(false);
+      setHasSubmitted(false);
+    }
   };
+
+  if (loadError) {
+    return <div>{loadError}</div>; // Hiển thị thông báo lỗi nếu không tải được dữ liệu
+  }
 
   if (!quizData) {
     return <div>Loading quiz...</div>;
@@ -142,7 +195,7 @@ const Quiz = () => {
       </div>
 
       <div className="submit-section">
-        <button className="submit-button" onClick={handleSubmit} disabled={isTimeUp}>
+        <button className="submit-button" onClick={handleSubmit} disabled={isTimeUp || isSubmitting}>
           Submit Quiz
         </button>
       </div>
