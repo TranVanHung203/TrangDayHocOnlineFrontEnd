@@ -4,6 +4,7 @@ import CreateCourse from "../pages/TeacherPage/CreateCourse"
 import LoadEditCourse from "../pages/TeacherPage/EditCourse"
 import OverViewExamPage from "../pages/StudentPage/OverViewExamPage"
 import Quiz from "../pages/StudentPage/Quiz"
+import Timeline from "../pages/StudentPage/Timeline"
 export const routes = [
     {
         path: '/mycourses',
@@ -29,5 +30,10 @@ export const routes = [
         path: '/quizzes/start/:quizid',
         page: Quiz
     },
+    {
+        path: '/notify/timeline',
+        page: Timeline
+    },
+
 
 ]

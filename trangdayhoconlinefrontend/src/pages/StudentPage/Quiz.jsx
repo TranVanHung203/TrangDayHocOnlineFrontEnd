@@ -1,6 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
+import CryptoJS from 'crypto-js';
 import "../../css/Quiz.css";
 import RestClient from '../../client-api/rest-client';
+
+const SECRET_KEY = 'my-very-secret-key';
+
+// Hàm mã hóa dữ liệu
+const encryptData = (data) => {
+  return CryptoJS.AES.encrypt(JSON.stringify(data), SECRET_KEY).toString();
+};
+
+// Hàm giải mã dữ liệu
+const decryptData = (ciphertext) => {
+  try {
+    const bytes = CryptoJS.AES.decrypt(ciphertext, SECRET_KEY);
+    return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+  } catch (e) {
+    console.error('Failed to decrypt data:', e);
+    return null;
+  }
+};
 
 const Quiz = () => {
   const [quizData, setQuizData] = useState(null);
@@ -11,35 +30,45 @@ const Quiz = () => {
   const [isTimeUp, setIsTimeUp] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
-  const [loadError, setLoadError] = useState(null); // Thêm trạng thái để kiểm tra lỗi tải
+  const [loadError, setLoadError] = useState(null);
   const questionRefs = useRef([]);
-
+  
   const quizId = window.location.href.split('/').pop();
 
+  // Lấy dữ liệu từ API
   useEffect(() => {
     const restClient = new RestClient();
     restClient.service('quizzes/start')
       .findById(quizId)
       .then((data) => {
-        setQuizData(data);
+        // Kiểm tra nếu có câu hỏi thì mới set quizData và đặt quizEndTime
+        if (data && data.questions && data.questions.length > 0) {
+          setQuizData(data);
 
-        // Nếu không có thời gian kết thúc đã lưu, tạo mới
-        if (!localStorage.getItem('quizEndTime')) {
-          const endTime = Date.now() + data.number * 60 * 1000;
-          localStorage.setItem('quizEndTime', endTime);
+          const storedEndTime = localStorage.getItem('quizEndTime');
+          if (!storedEndTime) {
+            const endTime = Date.now() + data.number * 60 * 1000;
+            localStorage.setItem('quizEndTime', encryptData(endTime));
+          }
+        } else {
+          setLoadError('Không tìm thấy dữ liệu!');
         }
       })
       .catch((error) => {
         console.error('Error fetching quiz data:', error);
-        setLoadError('Không thể tải dữ liệu câu hỏi. Vui lòng thử lại sau.'); // Đặt thông báo lỗi
+        setLoadError('Không thể tải dữ liệu câu hỏi. Vui lòng thử lại sau.');
       });
   }, [quizId]);
 
+  // Cập nhật bộ đếm thời gian
   useEffect(() => {
     const updateTimer = () => {
-      const endTime = parseInt(localStorage.getItem('quizEndTime'), 10);
-      const remainingTime = Math.max(0, endTime - Date.now());
+      const encryptedEndTime = localStorage.getItem('quizEndTime');
+      const endTime = encryptedEndTime ? decryptData(encryptedEndTime) : null;
 
+      if (!endTime) return;
+
+      const remainingTime = Math.max(0, endTime - Date.now());
       if (remainingTime <= 0) {
         setIsTimeUp(true);
         setTimeLeft(0);
@@ -91,6 +120,14 @@ const Quiz = () => {
   const handleSubmit = async () => {
     if (isSubmitting || hasSubmitted || !quizData || !quizData.questions) return;
 
+    const encryptedEndTime = localStorage.getItem('quizEndTime');
+    const endTime = encryptedEndTime ? decryptData(encryptedEndTime) : null;
+    
+    if (!endTime) {
+      alert('Dữ liệu thời gian không hợp lệ hoặc đã bị chỉnh sửa. Bạn không thể nộp bài.');
+      return;
+    }
+
     setIsSubmitting(true);
     setHasSubmitted(true);
 
@@ -114,13 +151,8 @@ const Quiz = () => {
     };
 
     try {
-      // Perform the POST request to submit the quiz
       await restClient.service(`quizzes/submit/${quizId}`).submitQuiz(submissionData);
-
-      // After successful POST request, clear localStorage
-      localStorage.clear(); // This will remove all keys from localStorage
-
-      // Redirect to the quiz result or summary page
+      localStorage.clear();
       window.location.href = `http://localhost:3000/quizzes/${quizId}`;
     } catch (error) {
       console.error('Error submitting quiz:', error);
@@ -130,7 +162,7 @@ const Quiz = () => {
   };
 
   if (loadError) {
-    return <div>{loadError}</div>; // Hiển thị thông báo lỗi nếu không tải được dữ liệu
+    return <div>{loadError}</div>;
   }
 
   if (!quizData) {
@@ -167,11 +199,8 @@ const Quiz = () => {
               className="question-section"
             >
               <h2>{index + 1}. {question.questionTitle}</h2>
-              <button
-                className={`flag-button ${flaggedQuestions.includes(question.questionId) ? 'flagged' : ''}`}
-                onClick={() => toggleFlag(question.questionId)}
-              >
-                {flaggedQuestions.includes(question.questionId) ? 'Unflag' : 'Flag'}
+              <button className="flag-button" onClick={() => toggleFlag(question.questionId)}>
+                {flaggedQuestions.includes(question.questionId) ? 'Bỏ Cờ' : 'Đánh Dấu'}
               </button>
               <ul>
                 {question.answers.map((answer) => (
