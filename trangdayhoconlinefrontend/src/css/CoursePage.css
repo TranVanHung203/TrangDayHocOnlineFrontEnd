@@ -44,6 +44,7 @@
 
 .dates {
     margin-top: 10px;
+    font-weight: bold;
 }
 
 /* Tab section styles */
@@ -91,14 +92,33 @@
 /* Arrow for section header */
 .section-header .arrow {
     font-size: 1.8rem;
-    transition: transform 0.3s ease;
-    margin-left: 10px;
+    transition: transform 0.2s ease;
+    margin-left: -1000px;
     color: #333;
 }
 
 .section-header .arrow.open {
     transform: rotate(360deg);
 }
+
+.arrow {
+    margin-left: 10px;
+    margin-right: 10px;
+    /* Đẩy mũi tên sang phải */
+    font-size: 20px;
+    /* Tăng kích thước font nếu cần */
+    cursor: pointer;
+    /* Hiển thị biểu tượng tay khi hover */
+    transition: transform 0.6s ease;
+    /* Hiệu ứng khi mở/đóng */
+}
+
+.arrow.open {
+    transform: rotate(360deg);
+    /* Xoay mũi tên khi mở */
+}
+
+
 
 /* Căn chỉnh tiêu đề Modules */
 .modules-header {
@@ -383,6 +403,42 @@ ul li strong {
     box-sizing: border-box;
 }
 
+.add-module-button {
+    background-color: #007bff;
+    /* Màu xanh dương */
+    color: #fff;
+    /* Màu chữ trắng */
+    font-size: 20px;
+    /* Tăng kích thước font */
+    width: 40px;
+    /* Chiều rộng nút */
+    height: 40px;
+    /* Chiều cao nút */
+    border-radius: 50%;
+    /* Bo tròn nút */
+    border: none;
+    /* Xóa viền nút */
+    display: flex;
+    /* Để canh giữa icon */
+    align-items: center;
+    /* Căn giữa theo chiều dọc */
+    justify-content: center;
+    /* Căn giữa theo chiều ngang */
+    cursor: pointer;
+    /* Hiển thị biểu tượng tay khi hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Hiệu ứng đổ bóng */
+    transition: transform 0.2s ease;
+    /* Hiệu ứng khi hover */
+}
+
+.add-module-button:hover {
+    transform: scale(1.1);
+    /* Tăng kích thước khi hover */
+    background-color: #0056b3;
+    /* Màu đậm hơn khi hover */
+}
+
 .form-actions {
     display: flex;
     justify-content: space-between;
@@ -426,11 +482,12 @@ ul li strong {
     cursor: pointer;
     border-radius: 3px;
     margin-left: 10px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease-in-out;
 }
 
 .delete-module:hover {
-    background-color: red;
+    background-color: rgb(59, 56, 56);
+    transform: scale(1.1);
 }
 
 
@@ -459,6 +516,42 @@ ul li strong {
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+}
+
+.add-quiz-button {
+    background-color: #007bff;
+    /* Màu xanh lá */
+    color: #fff;
+    /* Màu chữ trắng */
+    font-size: 20px;
+    /* Tăng kích thước font */
+    width: 40px;
+    /* Chiều rộng nút */
+    height: 40px;
+    /* Chiều cao nút */
+    border-radius: 50%;
+    /* Bo tròn nút */
+    border: none;
+    /* Xóa viền nút */
+    display: flex;
+    /* Để canh giữa icon */
+    align-items: center;
+    /* Căn giữa theo chiều dọc */
+    justify-content: center;
+    /* Căn giữa theo chiều ngang */
+    cursor: pointer;
+    /* Hiển thị biểu tượng tay khi hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Hiệu ứng đổ bóng */
+    transition: transform 0.2s ease;
+    /* Hiệu ứng khi hover */
+}
+
+.add-quiz-button:hover {
+    transform: scale(1.1);
+    /* Tăng kích thước khi hover */
+    background-color: #0056b3;
+    /* Màu đậm hơn khi hover */
 }
 
 .form-actions {
@@ -508,48 +601,37 @@ ul li strong {
 }
 
 .delete-quiz-button:hover {
-    background-color: red;
+    background-color: rgb(59, 56, 56);
+    transform: scale(1.1);
 }
 
-/* Bao ngoài form */
-.add-lesson-form-flex {
-    display: flex;
-    /* Sử dụng flexbox */
-    justify-content: center;
-    /* Căn giữa theo chiều ngang */
-    align-items: center;
-    /* Căn giữa theo chiều dọc */
-    height: 100vh;
-    /* Chiều cao toàn bộ màn hình */
-    padding: 20px;
-    /* Khoảng cách quanh form */
-}
 
 
 /* Form container */
 .add-lesson-form {
-    background-color: #f9f9f9;
+    background-color: #ffffff;
     /* Light background color */
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     /* Light border */
-    border-radius: 8px;
+    border-radius: 10px;
     /* Rounded corners */
-    padding: 20px;
+    padding: 25px;
     /* Inner spacing */
-    margin: 15px 0;
+    margin: 20px 0;
     /* Outer spacing */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     /* Shadow effect */
-    max-width: 500px;
+    max-width: 600px;
     /* Maximum width */
     width: 100%;
     /* Full width */
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Font family */
 }
 
 /* Form group (each input and label) */
 .add-lesson-form div {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     /* Spacing between groups */
 }
 
@@ -557,28 +639,27 @@ ul li strong {
 .add-lesson-form label {
     display: block;
     /* Label above input */
-    font-weight: bold;
+    font-weight: 600;
     /* Bold text */
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     /* Spacing below label */
-    color: #333;
+    color: #444;
     /* Text color */
 }
 
 /* Text input, textarea, and file input */
 .add-lesson-form input[type="text"],
-.add-lesson-form input[type="number"],
 .add-lesson-form input[type="file"],
 .add-lesson-form textarea {
     width: 100%;
     /* Full width */
-    padding: 10px;
+    padding: 12px;
     /* Inner spacing */
-    border: 1px solid #ccc;
+    border: 1px solid #bbb;
     /* Border */
-    border-radius: 4px;
+    border-radius: 6px;
     /* Rounded corners */
-    font-size: 14px;
+    font-size: 15px;
     /* Font size */
     box-sizing: border-box;
     /* Include padding in size */
@@ -588,7 +669,7 @@ ul li strong {
 .add-lesson-form textarea {
     resize: vertical;
     /* Allow vertical resize */
-    min-height: 80px;
+    min-height: 100px;
     /* Minimum height */
 }
 
@@ -598,19 +679,19 @@ ul li strong {
     /* Horizontal buttons */
     justify-content: flex-end;
     /* Align right */
-    gap: 10px;
+    gap: 15px;
     /* Spacing between buttons */
 }
 
 /* Buttons */
 .add-lesson-form button {
-    padding: 10px 15px;
+    padding: 12px 20px;
     /* Inner spacing */
-    font-size: 14px;
+    font-size: 15px;
     /* Font size */
     border: none;
     /* No border */
-    border-radius: 4px;
+    border-radius: 6px;
     /* Rounded corners */
     cursor: pointer;
     /* Pointer cursor */
@@ -619,25 +700,196 @@ ul li strong {
 }
 
 .add-lesson-form button[type="submit"] {
-    background-color: #4caf50;
+    background-color: #28a745;
     /* Green for submit button */
     color: white;
     /* White text */
 }
 
 .add-lesson-form button[type="submit"]:hover {
-    background-color: #45a049;
+    background-color: #218838;
     /* Darker on hover */
 }
 
 .add-lesson-form button[type="button"] {
-    background-color: #f44336;
+    background-color: #dc3545;
     /* Red for cancel button */
     color: white;
     /* White text */
 }
 
 .add-lesson-form button[type="button"]:hover {
-    background-color: #d32f2f;
+    background-color: #c82333;
     /* Darker on hover */
+}
+
+
+.add-lesson-button {
+    margin-left: 10px;
+    /* Đẩy nút sang phải */
+    padding: 8px 14px;
+    /* Tăng kích thước padding để nút nhìn lớn và dễ nhấn hơn */
+    background-color: #007bff;
+    /* Màu xanh lá tươi sáng */
+    color: #fff;
+    /* Chữ màu trắng */
+    border: none;
+    /* Không viền */
+    border-radius: 5px;
+    /* Bo góc nhẹ */
+    cursor: pointer;
+    /* Con trỏ dạng tay khi hover */
+    font-size: 16px;
+    /* Cỡ chữ dễ đọc */
+    font-weight: bold;
+    /* Đậm chữ */
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease;
+    /* Hiệu ứng thay đổi màu và phóng to khi hover */
+}
+
+.add-lesson-button:hover {
+    background-color: #0056b3;
+    /* Màu xanh lá đậm hơn khi hover */
+    transform: scale(1.1);
+    /* Tăng kích thước nút khi hover */
+}
+
+.add-lesson-button:focus {
+    outline: none;
+    /* Bỏ viền khi nút được focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    /* Thêm bóng mờ xanh khi focus */
+}
+
+
+.delete-lesson {
+    background-color: gray;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    margin-left: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.delete-lesson:hover {
+    background-color: red;
+}
+
+/* Highlight Form During Edit Mode */
+.add-quiz-form.edit-mode {
+    border: 2px solid #007bff;
+    /* Blue border to indicate editing */
+    background-color: #f0f8ff;
+    /* Light blue background for edit mode */
+    border-radius: 8px;
+    /* Smooth corners */
+    padding: 16px;
+    transition: all 0.3s ease-in-out;
+    /* Smooth transition for toggling edit mode */
+}
+
+/* Styling for Labels in Edit Mode */
+.add-quiz-form.edit-mode label {
+    color: #007bff;
+    /* Blue color for labels during edit */
+    font-weight: bold;
+}
+
+/* Buttons Specific to Edit Mode */
+.add-quiz-form.edit-mode .form-actions button[type="button"]:first-child {
+    background-color: #007bff;
+    /* Blue for Update button */
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.add-quiz-form.edit-mode .form-actions button[type="button"]:first-child:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
+}
+
+.add-quiz-form.edit-mode .form-actions button[type="button"]:last-child {
+    background-color: #ff4444;
+    /* Red for Cancel button */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.add-quiz-form.edit-mode .form-actions button[type="button"]:last-child:hover {
+    background-color: #cc0000;
+    /* Darker red on hover */
+}
+
+/* Focused Input Fields During Edit Mode */
+.add-quiz-form.edit-mode input:focus {
+    border-color: #007bff;
+    /* Blue border for focused inputs */
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    /* Subtle shadow effect */
+}
+
+.edit-quiz-button {
+    margin-left: 10px;
+    /* Đẩy nút qua phải */
+    padding: 6px 10px;
+    /* Tăng kích thước padding */
+    background-color: rgb(146, 144, 144);
+    /* Màu vàng cho nút chỉnh sửa */
+    color: #fff;
+    /* Chữ trắng */
+    border: none;
+    /* Bỏ viền */
+    border-radius: 4px;
+    /* Bo góc */
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease-in-out;
+    /* Hiệu ứng hover */
+}
+
+.edit-quiz-button:hover {
+    background-color: rgb(59, 56, 56);
+    /* Màu vàng đậm hơn khi hover */
+    transform: scale(1.1);
+}
+
+.edit-module-button {
+    /* Đẩy nút qua phải */
+    margin-left: 10px;
+    padding: 6px 10px;
+    /* Tăng kích thước padding */
+    background-color: rgb(146, 144, 144);
+    /* Màu xám cho nút chỉnh sửa */
+    color: #fff;
+    /* Chữ trắng */
+    border: none;
+    /* Bỏ viền */
+    border-radius: 4px;
+    /* Bo góc */
+    cursor: pointer;
+    /* Hiển thị con trỏ dạng tay khi hover */
+    font-size: 14px;
+    /* Cỡ chữ */
+    transition: background-color 0.3s ease-in-out;
+    /* Hiệu ứng hover */
+}
+
+.edit-module-button:hover {
+    background-color: rgb(59, 56, 56);
+    /* Màu xám đậm hơn khi hover */
+    transform: scale(1.1);
 }
