@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RestClient from '../../client-api/rest-client.js';
-import "../../css/CreateCourse.css";
+import styles from '../../css/CreateCourse.module.css'; // Correct the CSS import
 import Header from '../../components/Header/HeaderTeacher';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -23,16 +23,26 @@ const EditCourseForm = () => {
 
   const courseCode = window.location.pathname.split('/').pop();
 
-  // Kiểm tra quyền truy cập
+  // Kiểm tra quyền truy cập từ API
   useEffect(() => {
-    const role = localStorage.getItem('role');
-    if (role === 'Lecturer') {
-      setHasPermission(true); // Cho phép hiển thị trang
-    } else {
-      setHasPermission(false); // Không có quyền
-      toast.error('Bạn không có quyền truy cập trang này!');
-      setTimeout(() => navigate('/mycourses'), 3000); // Điều hướng sau khi thông báo
-    }
+    const checkRole = async () => {
+      try {
+        const response = await restClient.service('getRole').find();
+        if (response && response.role === 'Lecturer') {
+          setHasPermission(true);
+        } else {
+          setHasPermission(false);
+          toast.error('Bạn không có quyền truy cập trang này!');
+          setTimeout(() => navigate('/mycourses'), 3000); // Điều hướng sau khi thông báo
+        }
+      } catch (error) {
+        console.error('Error fetching role:', error);
+        toast.error('Không thể kiểm tra quyền truy cập.');
+        setTimeout(() => navigate('/mycourses'), 3000); // Điều hướng nếu lỗi xảy ra
+      }
+    };
+
+    checkRole();
   }, [navigate]);
 
   // Tải dữ liệu khóa học nếu có quyền
@@ -163,10 +173,10 @@ const EditCourseForm = () => {
       {!loading && hasPermission && (
         <>
           <Header />
-          <div className="course-form">
+          <div className={styles.courseForm}>
             <h2>Edit Course</h2>
             <form onSubmit={handleSubmit}>
-              <div className="form-section">
+              <div className={styles.formSection}>
                 <label>Course Name:</label>
                 <input
                   type="text"
@@ -176,7 +186,7 @@ const EditCourseForm = () => {
                   placeholder="Enter course name"
                 />
               </div>
-              <div className="form-section">
+              <div className={styles.formSection}>
                 <label>Course Start Date:</label>
                 <input
                   type="date"
@@ -185,7 +195,7 @@ const EditCourseForm = () => {
                   onChange={handleChange}
                 />
               </div>
-              <div className="form-section">
+              <div className={styles.formSection}>
                 <label>Description:</label>
                 <textarea
                   name="description"
@@ -194,7 +204,7 @@ const EditCourseForm = () => {
                   placeholder="Enter course description"
                 ></textarea>
               </div>
-              <div className="form-section">
+              <div className={styles.formSection}>
                 <label>Course End Date:</label>
                 <input
                   type="date"
@@ -203,11 +213,11 @@ const EditCourseForm = () => {
                   onChange={handleChange}
                 />
               </div>
-              <div className="form-section">
+              <div className={styles.formSection}>
                 <label>Student Emails:</label>
-                <div className="email-input-container">
+                <div className={styles.emailInputContainer}>
                   {courseData.emails.map((email, index) => (
-                    <div key={index} className="email-tag">
+                    <div key={index} className={styles.emailTag}>
                       {email}
                       <button type="button" onClick={() => removeEmail(index)}>
                         x
@@ -223,7 +233,7 @@ const EditCourseForm = () => {
                   />
                 </div>
               </div>
-              <button type="submit" className="submit-btn">Update Course</button>
+              <button type="submit" className={styles.submitBtn}>Update Course</button>
             </form>
           </div>
         </>

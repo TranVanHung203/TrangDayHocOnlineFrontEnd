@@ -1,9 +1,9 @@
-import '../../css/CreatQuestionAndAnswer.css';
 import RestClient from '../../client-api/rest-client.js';
 
 import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import styles from '../../css/CreatQuestionAndAnswer.module.css'; // Import CSS Module
 
 const restClient = new RestClient();
 
@@ -19,7 +19,6 @@ const App = () => {
   const [error, setError] = useState('');
   const questionsPerPage = 2;
 
-  // Kiểm tra quyền truy cập
   const checkRole = async () => {
     try {
       restClient.service('getRole');
@@ -37,7 +36,6 @@ const App = () => {
     }
   };
 
-  // Kiểm tra định dạng dữ liệu câu hỏi
   const validateQuestions = (data) => {
     return (
       data &&
@@ -48,7 +46,6 @@ const App = () => {
     );
   };
 
-  // Lấy quizId từ URL
   useEffect(() => {
     const url = window.location.href;
     const match = url.match(/\/QuestionAndAnswer\/([a-f0-9]{24})/);
@@ -59,19 +56,16 @@ const App = () => {
     }
   }, []);
 
-  // Kiểm tra quyền truy cập khi trang load
   useEffect(() => {
     checkRole();
   }, []);
 
-  // Lấy danh sách câu hỏi nếu có quyền và quizId hợp lệ
   useEffect(() => {
     if (hasAccess && quizId) {
       fetchQuestions();
     }
   }, [hasAccess, quizId, currentPage]);
 
-  // Lấy danh sách câu hỏi
   const fetchQuestions = async () => {
     try {
       restClient.service(`quizzes/Q&A/${quizId}`);
@@ -90,7 +84,6 @@ const App = () => {
     }
   };
 
-  // Xử lý form câu hỏi
   const validateInputs = () => {
     if (question.trim() === '') {
       toast.warning('Câu hỏi không được để trống!');
@@ -220,13 +213,13 @@ const App = () => {
   }
 
   return (
-    <div className="app-container">
-      <h1>Quản lý Câu hỏi & Trả lời</h1>
+    <div className={styles.appContainer}>
+      <h1 className={styles.title}>Quản lý Câu hỏi & Trả lời</h1>
       <ToastContainer />
-      <div className="content-container">
-        <div className="form-container">
+      <div className={styles.contentContainer}>
+        <div className={styles.formContainer}>
           <form onSubmit={handleSubmit}>
-            <label>Câu hỏi:</label>
+            <label className={styles.label}>Câu hỏi:</label>
             <input
               type="text"
               value={question}
@@ -235,7 +228,7 @@ const App = () => {
               required
             />
 
-            <label>Câu trả lời (mỗi dòng là một câu trả lời, ví dụ: Paris|true):</label>
+            <label className={styles.label}>Câu trả lời (mỗi dòng là một câu trả lời, ví dụ: Paris|true):</label>
             <textarea
               rows="6"
               value={answers}
@@ -243,17 +236,19 @@ const App = () => {
               placeholder="Nhập câu trả lời, mỗi dòng là một câu trả lời (Answer|true/false)"
             ></textarea>
 
-            <button type="submit">{editIndex !== null ? 'Cập nhật' : 'Lưu'}</button>
+            <button type="submit" className={styles.button}>
+              {editIndex !== null ? 'Cập nhật' : 'Lưu'}
+            </button>
           </form>
         </div>
 
-        <div className="questions-list-container">
+        <div className={styles.questionsListContainer}>
           <h2>Danh sách câu hỏi</h2>
           {questionsList.length === 0 ? (
-            <p className="no-questions">Chưa có câu hỏi nào được tạo.</p>
+            <p className={styles.noQuestions}>Chưa có câu hỏi nào được tạo.</p>
           ) : (
             questionsList.map((item, index) => (
-              <div key={index} className="question-item">
+              <div key={index} className={styles.questionItem}>
                 <h3>{item.question_title}</h3>
                 <ul>
                   {item.answers.map((answer, i) => (
@@ -262,20 +257,27 @@ const App = () => {
                     </li>
                   ))}
                 </ul>
-                <button onClick={() => handleEdit(index)}>Chỉnh sửa</button>
-                <button onClick={() => handleDelete(index)}>Xóa</button>
+                <div className={styles.buttons}>
+                  <button onClick={() => handleEdit(index)} className={styles.button}>
+                    Chỉnh sửa
+                  </button>
+                  <button onClick={() => handleDelete(index)} className={styles.button}>
+                    Xóa
+                  </button>
+                </div>
               </div>
             ))
           )}
-          <div className="pagination">
+
+          <div className={styles.pagination}>
             <button onClick={goToPreviousPage} disabled={currentPage === 1}>
-              Trang trước
+              Trước
             </button>
             <span>
               Trang {currentPage} / {totalPages}
             </span>
             <button onClick={goToNextPage} disabled={currentPage === totalPages}>
-              Trang sau
+              Sau
             </button>
           </div>
         </div>

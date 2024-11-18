@@ -1,11 +1,4 @@
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #f0f4f8;
-  margin: 0;
-  padding: 20px;
-}
-
-.app-container {
+.appContainer {
   max-width: 1200px;
   margin: auto;
   background-color: #ffffff;
@@ -14,21 +7,16 @@ body {
   padding: 30px;
 }
 
-h1 {
-  text-align: center;
-  color: #1976d2;
-  margin-bottom: 20px;
-}
-
-.content-container {
+.contentContainer {
   display: flex;
-  gap: 50px; /* Tăng khoảng cách giữa hai khung */
+  gap: 50px; /* Khoảng cách giữa hai khung */
   align-items: flex-start;
 }
 
-.form-container,
-.questions-list-container {
+.formContainer, 
+.questionsListContainer {
   flex: 1;
+  min-width: 45%; /* Giới hạn độ rộng tối thiểu cho từng container */
 }
 
 form {
@@ -64,7 +52,7 @@ textarea {
 }
 
 button {
-  background-color: #1976d2;
+  background-color: #1576d2;
   color: white;
   padding: 12px;
   border: none;
@@ -78,14 +66,14 @@ button:hover {
   background-color: #1565c0;
 }
 
-.question-item {
+.questionItem {
   background-color: #e3f2fd;
   padding: 20px;
   border-radius: 8px;
-  margin-bottom: 20px; /* Tăng khoảng cách giữa các câu hỏi */
+  margin-bottom: 20px;
 }
 
-.question-item h3 {
+.questionItem h3 {
   color: #0d47a1;
 }
 
@@ -99,7 +87,7 @@ button:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 30px; /* Tăng khoảng cách trên và dưới của phân trang */
+  margin-top: 30px;
 }
 
 .pagination button {

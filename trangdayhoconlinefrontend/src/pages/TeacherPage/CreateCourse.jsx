@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import "../../css/CreateCourse.css"; // Import CSS
+import styles from "../../css/CreateCourse.module.css"; // Import CSS module
 import Header from '../../components/Header/HeaderTeacher';
 import { toast, ToastContainer } from 'react-toastify'; // Import react-toastify
 import 'react-toastify/dist/ReactToastify.css'; // Import CSS cho ToastContainer
+import RestClient from '../../client-api/rest-client';
+
+const restClient = new RestClient(); // Tạo instance của RestClient
 
 const CourseForm = () => {
   const [courseData, setCourseData] = useState({
@@ -16,22 +19,29 @@ const CourseForm = () => {
   const [emailInput, setEmailInput] = useState(''); // State để lưu email đang nhập
   const [isAuthorized, setIsAuthorized] = useState(false); // Kiểm tra quyền truy cập
 
-  // Kiểm tra quyền truy cập từ localStorage
   useEffect(() => {
-    const storedRole = localStorage.getItem('role'); // Lấy role từ localStorage
-    if (storedRole === 'Lecturer') {
-      setIsAuthorized(true); // Nếu role là Lecturer, cho phép truy cập
-    } else {
-      toast.error('Bạn không được phép truy cập.');
-    }
+    const fetchRole = async () => {
+      try {
+        const result = await restClient.service('getRole').find(); // Gọi API sử dụng RestClient
+
+        if (result.role === 'Lecturer') {
+          setIsAuthorized(true); // Nếu role là Lecturer, cho phép truy cập
+        } else {
+          toast.error('Bạn không được phép truy cập.');
+        }
+      } catch (error) {
+        console.error('Error fetching role:', error);
+        toast.error('Không thể kiểm tra quyền truy cập.');
+      }
+    };
+
+    fetchRole();
   }, []);
 
   if (!isAuthorized) {
-    // Nếu không có quyền, hiển thị thông báo lỗi
     return <p style={{ color: 'red', textAlign: 'center' }}>Bạn không được phép truy cập.</p>;
   }
 
-  // Hàm xử lý khi người dùng thay đổi giá trị trong các input khác
   const handleChange = (e) => {
     setCourseData({
       ...courseData,
@@ -39,18 +49,15 @@ const CourseForm = () => {
     });
   };
 
-  // Hàm thêm email vào danh sách khi nhấn Enter hoặc dấu phẩy
   const handleKeyDown = (e) => {
     if ((e.key === 'Enter' || e.key === ',') && emailInput.trim()) {
       e.preventDefault();
-
-      // Kiểm tra email đã tồn tại trong danh sách chưa
       if (!courseData.emails.includes(emailInput.trim())) {
         setCourseData({
           ...courseData,
           emails: [...courseData.emails, emailInput.trim()],
         });
-        setEmailInput(''); // Reset lại input
+        setEmailInput('');
         toast.success(`Email "${emailInput}" đã được thêm!`);
       } else {
         toast.error('Email đã tồn tại trong danh sách sinh viên!');
@@ -58,7 +65,6 @@ const CourseForm = () => {
     }
   };
 
-  // Hàm xóa email khỏi danh sách
   const removeEmail = (index) => {
     const updatedEmails = courseData.emails.filter((_, i) => i !== index);
     setCourseData({
@@ -68,13 +74,11 @@ const CourseForm = () => {
     toast.info('Email đã được xóa khỏi danh sách!');
   };
 
-  // Hàm kiểm tra ngày tháng hợp lệ
   const isValidDate = (dateString) => {
     const date = new Date(dateString);
-    return !isNaN(date.getTime()); // Kiểm tra ngày có hợp lệ không
+    return !isNaN(date.getTime());
   };
 
-  // Hàm kiểm tra tất cả các trường bắt buộc
   const validateFields = () => {
     if (!courseData.courseName.trim()) {
       toast.error('Tên khóa học không được để trống!');
@@ -92,20 +96,16 @@ const CourseForm = () => {
       toast.error('Ngày kết thúc không hợp lệ!');
       return false;
     }
-    return true; // Tất cả các trường đều hợp lệ
+    return true;
   };
 
-  // Hàm xử lý khi gửi form
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Kiểm tra các trường bắt buộc
     if (!validateFields()) {
-      return; // Nếu có lỗi, dừng không gửi form
+      return;
     }
 
     try {
-      // Gửi dữ liệu khóa học tới backend (giả lập)
       console.log('Sending course data:', courseData);
       toast.success('Khóa học đã được tạo thành công!');
       setCourseData({
@@ -124,10 +124,10 @@ const CourseForm = () => {
   return (
     <>
       <Header />
-      <div className="course-form">
+      <div className={styles.courseForm}>
         <h2>Create Course</h2>
         <form onSubmit={handleSubmit}>
-          <div className="form-section">
+          <div className={styles.formSection}>
             <label>Course Name:</label>
             <input
               type="text"
@@ -137,7 +137,7 @@ const CourseForm = () => {
               placeholder="Enter course name"
             />
           </div>
-          <div className="form-section">
+          <div className={styles.formSection}>
             <label>Course Start Date:</label>
             <input
               type="date"
@@ -146,7 +146,7 @@ const CourseForm = () => {
               onChange={handleChange}
             />
           </div>
-          <div className="form-section">
+          <div className={styles.formSection}>
             <label>Description:</label>
             <textarea
               name="description"
@@ -155,7 +155,7 @@ const CourseForm = () => {
               placeholder="Enter course description"
             ></textarea>
           </div>
-          <div className="form-section">
+          <div className={styles.formSection}>
             <label>Course End Date:</label>
             <input
               type="date"
@@ -164,11 +164,11 @@ const CourseForm = () => {
               onChange={handleChange}
             />
           </div>
-          <div className="form-section">
+          <div className={styles.formSection}>
             <label>Student Emails:</label>
-            <div className="email-input-container">
+            <div className={styles.emailInputContainer}>
               {courseData.emails.map((email, index) => (
-                <div key={index} className="email-tag">
+                <div key={index} className={styles.emailTag}>
                   {email}
                   <button type="button" onClick={() => removeEmail(index)}>
                     x
@@ -184,11 +184,9 @@ const CourseForm = () => {
               />
             </div>
           </div>
-          <div style={{ width: '100%' }}>
-            <button type="submit" className="submit-btn">
-              Create Course
-            </button>
-          </div>
+          <button type="submit" className={styles.submitBtn}>
+            Create Course
+          </button>
         </form>
       </div>
       <ToastContainer />
