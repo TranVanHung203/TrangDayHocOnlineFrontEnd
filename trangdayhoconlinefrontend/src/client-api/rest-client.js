@@ -31,6 +31,23 @@ class RestClient {
         }
     }
 
+    async findById(id) {
+        try {
+            const url = new URL(`${this.baseUrl}/${this.path}/${id}`);
+            
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching data by ID:', error);
+        }
+    }
+
     async create(data) {
         try {
             const response = await fetch(`${this.baseUrl}/${this.path}`, {
@@ -60,6 +77,40 @@ class RestClient {
             return await response.json();
         } catch (error) {
             console.error('Error updating data:', error);
+        }
+    }
+
+    // Thêm phương thức delete
+    async delete() {
+        try {
+            const url = `${this.baseUrl}/${this.path}`;
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Error deleting data:', error);
+        }
+    }
+
+    // Thêm phương thức nộp bài kiểm tra
+    async submitQuiz(data) {
+        try {
+            const response = await fetch(`${this.baseUrl}/${this.path}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify(data)
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Error submitting quiz:', error);
         }
     }
     async findCourseById(courseId) {
@@ -196,7 +247,7 @@ class RestClient {
         }
     }
 
-    async downloadLesson(lessonId) {
+    async downloadLesson(lessonId,name) {
         try {
             const url = `${this.baseUrl}/lessons/download/${lessonId}`;
             const response = await fetch(url, {
@@ -211,7 +262,7 @@ class RestClient {
             // Lấy tên file từ header `Content-Disposition`
             const contentDisposition = response.headers.get('Content-Disposition');
             const filenameMatch = contentDisposition?.match(/filename="?(.+)"?/);
-            const filename = filenameMatch ? filenameMatch[1] : 'downloaded-file';
+            const filename = filenameMatch ? filenameMatch[1] : name;
 
             // Lấy dữ liệu file dưới dạng blob
             const blob = await response.blob();
@@ -304,4 +355,5 @@ class RestClient {
     }
 
 }
+
 export default RestClient;

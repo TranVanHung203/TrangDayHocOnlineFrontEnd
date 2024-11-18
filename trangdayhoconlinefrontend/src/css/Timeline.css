@@ -1,0 +1,88 @@
+/* Timeline.css */
+
+/* General container for the timeline */
+.timeline-container {
+    padding: 20px;
+    background-color: #f4f6f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 1000px;
+    margin: 20px auto;
+  }
+  
+  .timeline-container h1 {
+    text-align: center;
+    font-size: 32px;
+    color: #2a3d66;
+    margin-bottom: 20px;
+  }
+  
+  .timeline-container .message {
+    text-align: center;
+    color: #555;
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+  
+  /* Button to toggle sorting */
+  .sort-button {
+    display: block;
+    margin: 0 auto 30px;
+    padding: 12px 20px;
+    background-color: #3498db;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .sort-button:hover {
+    background-color: #2980b9;
+  }
+  
+  /* Horizontal list for quizzes */
+  .quizzes-list-horizontal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  
+  .quiz-card-horizontal {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 48%;
+    padding: 15px;
+    transition: transform 0.3s ease;
+  }
+  
+  .quiz-card-horizontal:hover {
+    transform: scale(1.05);
+  }
+  
+  .card-header h2 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .card-body {
+    font-size: 16px;
+    color: #555;
+  }
+  
+  .card-body p {
+    margin: 8px 0;
+  }
+  
+  .time-remaining {
+    font-weight: bold;
+    color: #e74c3c;
+    font-size: 14px;
+  }
+  

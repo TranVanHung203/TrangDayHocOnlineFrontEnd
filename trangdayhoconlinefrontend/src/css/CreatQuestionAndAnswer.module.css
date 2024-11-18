@@ -1,0 +1,110 @@
+.appContainer {
+  max-width: 1200px;
+  margin: auto;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+}
+
+.contentContainer {
+  display: flex;
+  gap: 50px; /* Khoảng cách giữa hai khung */
+  align-items: flex-start;
+}
+
+.formContainer, 
+.questionsListContainer {
+  flex: 1;
+  min-width: 45%; /* Giới hạn độ rộng tối thiểu cho từng container */
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #1976d2;
+}
+
+input[type='text'],
+textarea {
+  padding: 12px;
+  border: 2px solid #1976d2;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  width: 100%;
+  transition: border-color 0.3s;
+}
+
+input[type='text']:focus,
+textarea:focus {
+  border-color: #1565c0;
+  outline: none;
+}
+
+textarea {
+  resize: vertical;
+}
+
+button {
+  background-color: #1576d2;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #1565c0;
+}
+
+.questionItem {
+  background-color: #e3f2fd;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.questionItem h3 {
+  color: #0d47a1;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.pagination button {
+  padding: 8px 16px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background-color: #90caf9;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-weight: bold;
+  color: #0d47a1;
+}
