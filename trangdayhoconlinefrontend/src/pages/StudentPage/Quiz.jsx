@@ -32,7 +32,7 @@ const Quiz = () => {
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [loadError, setLoadError] = useState(null);
   const questionRefs = useRef([]);
-  
+
   const quizId = window.location.href.split('/').pop();
 
   // Lấy dữ liệu từ API
@@ -67,7 +67,6 @@ const Quiz = () => {
       const endTime = encryptedEndTime ? decryptData(encryptedEndTime) : null;
 
       if (!endTime) {
-        // Nếu `quizEndTime` không tồn tại hoặc bị sửa, tự động nộp bài
         if (!hasSubmitted && !isSubmitting && quizData) {
           console.warn('quizEndTime bị xóa hoặc chỉnh sửa. Tự động nộp bài.');
           handleSubmit();
@@ -80,6 +79,7 @@ const Quiz = () => {
         setIsTimeUp(true);
         setTimeLeft(0);
         if (!hasSubmitted && !isSubmitting && quizData) {
+          console.warn('Thời gian hết hạn. Tự động nộp bài.');
           handleSubmit();
         }
       } else {
@@ -91,7 +91,7 @@ const Quiz = () => {
     const countdown = setInterval(updateTimer, 1000);
 
     return () => clearInterval(countdown);
-  }, [isSubmitting, hasSubmitted, quizData]);
+  }, [isSubmitting, hasSubmitted, quizData, selectedAnswers]);
 
   const formatTime = (seconds) => {
     const minutes = String(Math.floor(seconds / 60)).padStart(2, '0');
@@ -139,17 +139,21 @@ const Quiz = () => {
       startTime = startDate.toISOString();
     }
 
+    // Sử dụng bản sao trạng thái mới nhất
+    const currentSelectedAnswers = { ...selectedAnswers };
+
     const answers = quizData.questions.map((question) => ({
       questionId: question.questionId,
-      answerId: selectedAnswers[question.questionId] || ""
+      answerId: currentSelectedAnswers[question.questionId] || "", // Đảm bảo không bỏ qua câu trả lời
     }));
 
     const submissionData = {
       answers,
-      startTime
+      startTime,
     };
 
     try {
+      console.log('Submitting data:', submissionData); // Log để kiểm tra
       await restClient.service(`quizzes/submit/${quizId}`).submitQuiz(submissionData);
       localStorage.clear();
       window.location.href = `http://localhost:3000/quizzes/${quizId}`;

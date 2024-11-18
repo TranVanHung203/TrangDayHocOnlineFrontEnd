@@ -82,7 +82,9 @@ const QuizOverview = () => {
   const startDeadlines = convertUTCToVN(quizData.start_deadline);
   const endDeadlines = convertUTCToVN(quizData.end_deadline);
   const isAvailable = currentDate.getTime() >= startDeadlines.getTime() && currentDate.getTime() <= endDeadlines.getTime();
-
+  const handleGoHome = () => {
+    window.location.href = '/mycourses';
+  };
   // Hàm xử lý khi nhấn nút "Start Quiz"
   const handleStartQuiz = () => {
     window.location.href = `http://localhost:3000/quizzes/start/${quizId}`;
@@ -93,7 +95,7 @@ const QuizOverview = () => {
       <div className="quiz-card">
         <h1 className="quiz-title">{quizData.name}</h1>
         <div className="quiz-info">
-          <p><strong>Quiz Number:</strong> {quizData.number}</p>
+          <p><strong>Thời gian làm bài:</strong> {quizData.number} Phút</p>
           <p><strong>Minimum Pass Score:</strong> {quizData.min_pass_score}</p>
           <p><strong>Start Deadline:</strong> {startDeadline}</p>
           <p><strong>End Deadline:</strong> {endDeadline}</p>
@@ -114,6 +116,9 @@ const QuizOverview = () => {
         >
           {quizData.attemptTime ? 'Completed' : (isAvailable ? 'Start Quiz' : 'Quiz Time Not Available')}
         </button>
+        <button className="home-btn" onClick={handleGoHome}>
+            My courses
+          </button>
       </div>
     </div>
   );

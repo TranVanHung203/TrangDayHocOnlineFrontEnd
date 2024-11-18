@@ -319,10 +319,10 @@ const CoursePage = () => {
     };
 
 
-    const handleDownloadLesson = async (lessonId) => {
+    const handleDownloadLesson = async (lessonId,name) => {
         try {
             const client = new RestClient();
-            const result = await client.downloadLesson(lessonId);
+            const result = await client.downloadLesson(lessonId,name);
 
             if (!result.success) {
                 Swal.fire('Lỗi!', result.message, 'error');
@@ -680,7 +680,7 @@ const CoursePage = () => {
                                                                     <span
                                                                         className="download-lesson"
                                                                         style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
-                                                                        onClick={() => handleDownloadLesson(lesson._id)} // Gọi hàm tải xuống
+                                                                        onClick={() => handleDownloadLesson(lesson._id,lesson.name)} // Gọi hàm tải xuống
                                                                     >
                                                                         Tải xuống tài liệu
                                                                     </span>
@@ -821,7 +821,7 @@ const CoursePage = () => {
                                                         <button
                                                             className="quiz-button"
                                                             onClick={() =>
-                                                                (window.location.href = `/quiz/${quiz._id}`)
+                                                                (window.location.href = `/QuestionAndAnswer/${quiz._id}`)
                                                             }
                                                         >
                                                             {quiz.name}
