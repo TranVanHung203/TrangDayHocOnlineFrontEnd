@@ -8,7 +8,7 @@ export const routes = [
         page: HomePage
     },
     {
-        path: '/coursepage',
+        path: '/mycourses/coursepage/:courseId',
         page: CoursePage
     },
     {
@@ -18,6 +18,6 @@ export const routes = [
     {
         path: '/updatecourses/load-course/:courseId',  // Đường dẫn dynamic với :courseId
         page: LoadEditCourse  // Giả sử bạn có trang UpdateCourse để xử lý cập nhật khóa học
-      }
+    }
 
 ]
