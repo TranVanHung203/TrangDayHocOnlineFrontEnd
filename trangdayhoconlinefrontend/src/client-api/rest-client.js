@@ -80,7 +80,24 @@ class RestClient {
         }
     }
 
-    // Thêm phương thức mới để nộp bài kiểm tra
+    // Thêm phương thức delete
+    async delete() {
+        try {
+            const url = `${this.baseUrl}/${this.path}`;
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Error deleting data:', error);
+        }
+    }
+
+    // Thêm phương thức nộp bài kiểm tra
     async submitQuiz(data) {
         try {
             const response = await fetch(`${this.baseUrl}/${this.path}`, {

@@ -41,10 +41,10 @@ const Quiz = () => {
     restClient.service('quizzes/start')
       .findById(quizId)
       .then((data) => {
-        // Kiểm tra nếu có câu hỏi thì mới set quizData và đặt quizEndTime
         if (data && data.questions && data.questions.length > 0) {
           setQuizData(data);
 
+          // Thiết lập `quizEndTime` nếu chưa tồn tại
           const storedEndTime = localStorage.getItem('quizEndTime');
           if (!storedEndTime) {
             const endTime = Date.now() + data.number * 60 * 1000;
@@ -66,7 +66,14 @@ const Quiz = () => {
       const encryptedEndTime = localStorage.getItem('quizEndTime');
       const endTime = encryptedEndTime ? decryptData(encryptedEndTime) : null;
 
-      if (!endTime) return;
+      if (!endTime) {
+        // Nếu `quizEndTime` không tồn tại hoặc bị sửa, tự động nộp bài
+        if (!hasSubmitted && !isSubmitting && quizData) {
+          console.warn('quizEndTime bị xóa hoặc chỉnh sửa. Tự động nộp bài.');
+          handleSubmit();
+        }
+        return;
+      }
 
       const remainingTime = Math.max(0, endTime - Date.now());
       if (remainingTime <= 0) {
@@ -119,14 +126,6 @@ const Quiz = () => {
 
   const handleSubmit = async () => {
     if (isSubmitting || hasSubmitted || !quizData || !quizData.questions) return;
-
-    const encryptedEndTime = localStorage.getItem('quizEndTime');
-    const endTime = encryptedEndTime ? decryptData(encryptedEndTime) : null;
-    
-    if (!endTime) {
-      alert('Dữ liệu thời gian không hợp lệ hoặc đã bị chỉnh sửa. Bạn không thể nộp bài.');
-      return;
-    }
 
     setIsSubmitting(true);
     setHasSubmitted(true);

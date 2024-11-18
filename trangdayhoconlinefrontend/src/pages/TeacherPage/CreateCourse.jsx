@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import RestClient from '../../client-api/rest-client.js';
+import React, { useState, useEffect } from 'react';
 import "../../css/CreateCourse.css"; // Import CSS
 import Header from '../../components/Header/HeaderTeacher';
 import { toast, ToastContainer } from 'react-toastify'; // Import react-toastify
@@ -15,6 +14,22 @@ const CourseForm = () => {
   });
 
   const [emailInput, setEmailInput] = useState(''); // State để lưu email đang nhập
+  const [isAuthorized, setIsAuthorized] = useState(false); // Kiểm tra quyền truy cập
+
+  // Kiểm tra quyền truy cập từ localStorage
+  useEffect(() => {
+    const storedRole = localStorage.getItem('role'); // Lấy role từ localStorage
+    if (storedRole === 'Lecturer') {
+      setIsAuthorized(true); // Nếu role là Lecturer, cho phép truy cập
+    } else {
+      toast.error('Bạn không được phép truy cập.');
+    }
+  }, []);
+
+  if (!isAuthorized) {
+    // Nếu không có quyền, hiển thị thông báo lỗi
+    return <p style={{ color: 'red', textAlign: 'center' }}>Bạn không được phép truy cập.</p>;
+  }
 
   // Hàm xử lý khi người dùng thay đổi giá trị trong các input khác
   const handleChange = (e) => {
@@ -29,34 +44,34 @@ const CourseForm = () => {
     if ((e.key === 'Enter' || e.key === ',') && emailInput.trim()) {
       e.preventDefault();
 
-      // Kiểm tra email đã tồn tại trong mảng studentEmails chưa
+      // Kiểm tra email đã tồn tại trong danh sách chưa
       if (!courseData.emails.includes(emailInput.trim())) {
         setCourseData({
           ...courseData,
-          emails: [...courseData.emails, emailInput.trim()], // Thêm email mới vào mảng
+          emails: [...courseData.emails, emailInput.trim()],
         });
-        setEmailInput(''); // Reset lại ô input
-        toast.success(`Email "${emailInput}" đã được thêm!`); // Hiển thị thông báo thành công
+        setEmailInput(''); // Reset lại input
+        toast.success(`Email "${emailInput}" đã được thêm!`);
       } else {
-        toast.error('Email đã tồn tại trong danh sách sinh viên!'); // Thông báo lỗi
+        toast.error('Email đã tồn tại trong danh sách sinh viên!');
       }
     }
   };
 
   // Hàm xóa email khỏi danh sách
   const removeEmail = (index) => {
-    const updatedEmails = courseData.emails.filter((email, i) => i !== index);
+    const updatedEmails = courseData.emails.filter((_, i) => i !== index);
     setCourseData({
       ...courseData,
       emails: updatedEmails,
     });
-    toast.info('Email đã được xóa khỏi danh sách!'); // Thông báo khi email bị xóa
+    toast.info('Email đã được xóa khỏi danh sách!');
   };
 
   // Hàm kiểm tra ngày tháng hợp lệ
   const isValidDate = (dateString) => {
     const date = new Date(dateString);
-    return !isNaN(date.getTime()); // Kiểm tra xem ngày có hợp lệ không
+    return !isNaN(date.getTime()); // Kiểm tra ngày có hợp lệ không
   };
 
   // Hàm kiểm tra tất cả các trường bắt buộc
@@ -90,31 +105,19 @@ const CourseForm = () => {
     }
 
     try {
-      const restClient = new RestClient();
-
-      // Gửi dữ liệu khóa học tới backend
-      const response = await restClient
-        .service('courses/') // Đặt đường dẫn API
-        .create({
-          courseName: courseData.courseName,
-          description: courseData.description,
-          startDate: courseData.startDate,
-          endDate: courseData.endDate,
-          emails: courseData.emails, // Gửi mảng email
-        });
-
-      // Nếu thành công, bạn có thể thông báo cho người dùng hoặc redirect họ đến trang khác
-      toast.success('Khóa học đã được tạo thành công!'); // Thông báo thành công
+      // Gửi dữ liệu khóa học tới backend (giả lập)
+      console.log('Sending course data:', courseData);
+      toast.success('Khóa học đã được tạo thành công!');
       setCourseData({
         courseName: '',
         description: '',
         startDate: '',
         endDate: '',
-        emails: [], // Reset mảng emails
-      }); // Reset form sau khi submit
+        emails: [],
+      });
     } catch (error) {
       console.error('Error creating course:', error);
-      toast.error('Có lỗi xảy ra khi tạo khóa học. Vui lòng thử lại.'); // Thông báo lỗi khi có vấn đề
+      toast.error('Có lỗi xảy ra khi tạo khóa học. Vui lòng thử lại.');
     }
   };
 
@@ -167,7 +170,9 @@ const CourseForm = () => {
               {courseData.emails.map((email, index) => (
                 <div key={index} className="email-tag">
                   {email}
-                  <button type="button" onClick={() => removeEmail(index)}>x</button> {/* Nút xóa */}
+                  <button type="button" onClick={() => removeEmail(index)}>
+                    x
+                  </button>
                 </div>
               ))}
               <input
@@ -186,8 +191,6 @@ const CourseForm = () => {
           </div>
         </form>
       </div>
-
-      {/* Toast container để hiển thị thông báo */}
       <ToastContainer />
     </>
   );

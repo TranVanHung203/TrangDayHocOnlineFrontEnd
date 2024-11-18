@@ -1,0 +1,122 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f0f4f8;
+  margin: 0;
+  padding: 20px;
+}
+
+.app-container {
+  max-width: 1200px;
+  margin: auto;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+}
+
+h1 {
+  text-align: center;
+  color: #1976d2;
+  margin-bottom: 20px;
+}
+
+.content-container {
+  display: flex;
+  gap: 50px; /* Tăng khoảng cách giữa hai khung */
+  align-items: flex-start;
+}
+
+.form-container,
+.questions-list-container {
+  flex: 1;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #1976d2;
+}
+
+input[type='text'],
+textarea {
+  padding: 12px;
+  border: 2px solid #1976d2;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  width: 100%;
+  transition: border-color 0.3s;
+}
+
+input[type='text']:focus,
+textarea:focus {
+  border-color: #1565c0;
+  outline: none;
+}
+
+textarea {
+  resize: vertical;
+}
+
+button {
+  background-color: #1976d2;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #1565c0;
+}
+
+.question-item {
+  background-color: #e3f2fd;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px; /* Tăng khoảng cách giữa các câu hỏi */
+}
+
+.question-item h3 {
+  color: #0d47a1;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px; /* Tăng khoảng cách trên và dưới của phân trang */
+}
+
+.pagination button {
+  padding: 8px 16px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background-color: #90caf9;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-weight: bold;
+  color: #0d47a1;
+}
