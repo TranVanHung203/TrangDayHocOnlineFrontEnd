@@ -58,7 +58,7 @@ const CoursesOverview = () => {
 
   // Hàm chuyển hướng đến trang chi tiết khóa học
   const handleCourseClick = (maKhoaHoc) => {
-    navigate(`/mycourses/coursedetails/${maKhoaHoc}`);
+    navigate(`/mycourses/coursepage/${maKhoaHoc}`);
   };
 
   // Hàm chuyển hướng đến trang chỉnh sửa khóa học

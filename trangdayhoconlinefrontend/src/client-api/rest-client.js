@@ -17,7 +17,7 @@ class RestClient {
         try {
             const url = new URL(`${this.baseUrl}/${this.path}`);
             Object.keys(query).forEach(key => url.searchParams.append(key, query[key]));
-    
+
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
