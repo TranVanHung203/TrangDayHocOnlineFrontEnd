@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import RestClient from '../../client-api/rest-client.js';
 import '../../css/CoursePage.css';
 import { useParams } from 'react-router-dom';
-import HeaderStudent from '../../components/Header/HeaderStudent';
+import HeaderTeacher from '../../components/Header/HeaderTeacher';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify'; // Import react-toastify
+
 
 const CoursePage = () => {
     const { courseId } = useParams();
-
+    const navigate = useNavigate();
     const [courseData, setCourseData] = useState(null);
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -18,6 +21,50 @@ const CoursePage = () => {
     const [isEditingQuiz, setIsEditingQuiz] = useState(false);
     const [editingQuizId, setEditingQuizId] = useState(null); // ID của quiz đang chỉnh sửa
     const [editingModule, setEditingModule] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [isAuthorized, setIsAuthorized] = useState(false); // Kiểm tra quyền truy cập
+
+
+    const fetchStudents = async (page = 1, limit = 10) => {
+        setLoadingStudents(true);
+        try {
+            const client = new RestClient();
+            const data = await client.findCourseStudents(courseId, page, limit);
+            if (data && data.students) {
+                setStudents(data.students);
+                setTotalPages(data.totalPages || 1); // Cập nhật tổng số trang nếu server trả về
+            } else {
+                setStudents([]);
+            }
+        } catch (error) {
+            console.error("Error fetching students:", error);
+        } finally {
+            setLoadingStudents(false);
+        }
+    };
+
+    useEffect(() => {
+        if (activeTab === 'members') {
+            fetchStudents(currentPage);
+        }
+    }, [activeTab, currentPage]);
+
+    const PAGE_GROUP_SIZE = 10; // Số trang hiển thị trong mỗi nhóm
+
+    // Tính toán phạm vi trang
+    const getPageGroupRange = (currentPage, pageGroupSize) => {
+        const start = Math.floor((currentPage - 1) / pageGroupSize) * pageGroupSize + 1;
+        const end = Math.min(start + pageGroupSize - 1, totalPages);
+        return { start, end };
+    };
+
+    // Lấy nhóm trang hiện tại
+    const { start: groupStart, end: groupEnd } = getPageGroupRange(currentPage, PAGE_GROUP_SIZE);
+
+
+
+
 
     const [showAddQuizForm, setShowAddQuizForm] = useState(false);
     const [newQuiz, setNewQuiz] = useState({
@@ -31,6 +78,9 @@ const CoursePage = () => {
 
 
 
+
+
+
     const [showAddLessonForm, setShowAddLessonForm] = useState(null);
     const [newLesson, setNewLesson] = useState({
         name: '',
@@ -39,6 +89,45 @@ const CoursePage = () => {
         type: '',
         file: null, // Thêm trường file
     });
+
+
+    const handleBellClick = async () => {
+        try {
+            const client = new RestClient();
+            // Sử dụng RestClient để gửi yêu cầu GET
+            const response = await client.service(`notify/send-reminder/${courseId}`).find();
+
+            // Kiểm tra kết quả phản hồi
+            if (response?.message === "Reminders sent successfully!") {
+                // Success notification using SweetAlert2
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: response.message, // Sử dụng câu trả lời từ API
+                    confirmButtonText: 'OK',
+                });
+            } else {
+                // Failure notification using SweetAlert2
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Something went wrong. Failed to send reminder.',
+                    confirmButtonText: 'Try Again',
+                });
+            }
+        } catch (error) {
+            console.error('Error sending reminder:', error);
+            // Error notification using SweetAlert2
+            Swal.fire({
+                icon: 'error',
+                title: 'Network Error!',
+                text: 'Please try again later.',
+                confirmButtonText: 'Close',
+            });
+        }
+    };
+
+
 
 
     const handleFileChange = (e) => {
@@ -54,13 +143,18 @@ const CoursePage = () => {
         const { name, value } = e.target;
         setNewLesson((prev) => ({ ...prev, [name]: value }));
     };
-
+    const spinnerRef = useRef(null); // Tham chiếu đến hiệu ứng xoay vòng
     const handleAddLesson = async (e, moduleId) => {
         e.preventDefault();
+        // Hiển thị spinner
+        if (spinnerRef.current) {
+            spinnerRef.current.style.display = 'inline-block';
+        }
+
         try {
             const formData = new FormData();
             formData.append('name', newLesson.name);
-            formData.append('number', "10");
+            formData.append('number', '10');
             formData.append('lesson_details', newLesson.lesson_details);
             formData.append('type', newLesson.type);
             if (newLesson.file) {
@@ -69,15 +163,29 @@ const CoursePage = () => {
 
             const client = new RestClient();
             const result = await client.addLesson(moduleId, formData); // Gửi formData
-            if (result) {
+
+            if (result.message === 'Lesson created successfully') {
                 Swal.fire('Thành công!', 'Bài học đã được thêm.', 'success').then(() => {
                     window.location.reload();
                 });
             }
+            else if (result.error.message === 'File too large') {
+                Swal.fire('Lỗi!', 'File quá lớn, vui lòng chọn file nhỏ hơn.', 'error')
+                    .then(() => {
+                        window.location.reload();
+                    });
+            }
         } catch (error) {
-            Swal.fire('Lỗi!', 'Không thể thêm bài học.', 'error');
+            console.error('Error adding lesson:', error);
+
+        } finally {
+            // Ẩn spinner
+            if (spinnerRef.current) {
+                spinnerRef.current.style.display = 'none';
+            }
         }
     };
+
 
 
     const toggleAddQuizForm = () => {
@@ -148,6 +256,7 @@ const CoursePage = () => {
             // Chuyển đổi từ ISO string thành Date object
             const date = new Date(dateString);
 
+            date.setHours(date.getHours() - 7);
             // Lấy các phần ngày tháng năm và giờ phút
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0'); // tháng bắt đầu từ 0
@@ -231,36 +340,63 @@ const CoursePage = () => {
             Swal.fire('Lỗi!', 'Không thể xóa quiz.', 'error');
         }
     };
+    useEffect(() => {
+        // Kiểm tra vai trò người dùng
+        const checkRole = async () => {
+            try {
+                const restClient = new RestClient();
+                const result = await restClient.service('getRole').find(); // Gọi API kiểm tra vai trò
+
+                if (result.role === 'Lecturer') {
+                    setIsAuthorized(true); // Nếu role là Lecturer, cho phép truy cập
+                } else {
+
+                    navigate('/mycourses'); // Điều hướng đến trang không được phép
+                }
+            } catch (error) {
+
+                navigate('/mycourses'); // Điều hướng đến trang không được phép
+            }
+        };
+
+        checkRole();
+    }, [navigate]);
 
     useEffect(() => {
+        // Fetch dữ liệu khóa học chỉ khi đã xác nhận quyền truy cập
         const fetchCourseData = async () => {
-            const client = new RestClient();
-            const data = await client.findCourseById(courseId);
-            console.log("du lieu nè:", data)
-            setCourseData(data);
-            setLoading(false);
+            if (!isAuthorized) return; // Không thực hiện nếu không được phép
+
+            try {
+                const client = new RestClient();
+                const data = await client.findCourseById(courseId);
+                console.log('Dữ liệu khóa học:', data);
+                setCourseData(data);
+            } catch (error) {
+                console.error('Error fetching course data:', error);
+                toast.error('Không thể tải dữ liệu khóa học.');
+            } finally {
+                setLoading(false); // Dừng trạng thái loading
+            }
         };
 
         fetchCourseData();
-    }, [courseId]);
+    }, [isAuthorized, courseId]);
+
+    // Nếu đang loading, hiển thị thông báo
+    if (loading) {
+        return <p>Đang kiểm tra quyền truy cập và tải dữ liệu...</p>;
+    }
+
+    // Nếu không được phép, hiển thị thông báo (phòng khi `navigate` không kích hoạt kịp)
+    if (!isAuthorized) {
+        return <p>Bạn không được phép truy cập trang này.</p>;
+    }
 
 
     const toggleQuizSection = () => {
         setExpandedQuizSection((prev) => !prev);
     };
-    useEffect(() => {
-        if (activeTab === 'members') {
-            const fetchCourseStudents = async () => {
-                const client = new RestClient();
-                const data = await client.findCourseStudents(courseId);
-                setStudents(data.students);
-                console.log("Du lieu ne", data);
-                setLoadingStudents(false);
-            };
-
-            fetchCourseStudents();
-        }
-    }, [activeTab, courseId]);
 
     const handleDeleteModule = async (moduleId) => {
         if (!moduleId) {
@@ -319,10 +455,10 @@ const CoursePage = () => {
     };
 
 
-    const handleDownloadLesson = async (lessonId,name) => {
+    const handleDownloadLesson = async (lessonId, name) => {
         try {
             const client = new RestClient();
-            const result = await client.downloadLesson(lessonId,name);
+            const result = await client.downloadLesson(lessonId, name);
 
             if (!result.success) {
                 Swal.fire('Lỗi!', result.message, 'error');
@@ -469,7 +605,7 @@ const CoursePage = () => {
     return (
         <div className="container">
             <div className="content">
-                <HeaderStudent />
+                <HeaderTeacher />
 
                 <div className="main-container">
                     <div className="header-section">
@@ -495,23 +631,32 @@ const CoursePage = () => {
                         </div>
                         <div
                             className={`tab ${activeTab === 'progress' ? 'tab-active' : ''}`}
-                            onClick={() => handleTabClick('progress')}
+                            onClick={() => {
+                                handleTabClick('progress');
+                                navigate(`/progress/${courseId}`); // Điều hướng bằng React Router
+                            }}
                         >
                             <h3>Tiến độ học tập</h3>
                         </div>
-
                     </div>
 
                     <div className="tab-content">
                         {activeTab === 'course' && (
                             <>
-                                <p>Giới thiệu về khóa học: {courseData.description || "No description available."}</p>
-                                <p>Số lượng Modules: {courseData.modules?.length || 0}</p>
+                                <div className="course-description">
+                                    <strong>Giới thiệu về khóa học: </strong>
+                                    {courseData.description || "No description available."}
+                                </div>
+
 
 
                                 <div className="section">
                                     <h4 className="section-header" onClick={toggleModulesSection}>
-                                        Modules
+                                        <span className="title-module">
+                                            Modules
+                                        </span>
+
+
                                         <span className={`arrow ${expandedModulesSection ? 'open' : ''}`}>
                                             {expandedModulesSection ? '▼' : '▶'}
                                         </span>
@@ -666,6 +811,35 @@ const CoursePage = () => {
                                                                 <button type="submit">Thêm</button>
                                                                 <button type="button" onClick={() => setShowAddLessonForm(null)}>Hủy</button>
                                                             </div>
+                                                            <div ref={spinnerRef} className="spinner" style={{ display: 'none' }}>
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    viewBox="0 0 100 100"
+                                                                    width="50"
+                                                                    height="50"
+                                                                    className="loading-icon"
+                                                                >
+                                                                    <circle
+                                                                        cx="50"
+                                                                        cy="50"
+                                                                        r="45"
+                                                                        stroke="#3498db"
+                                                                        strokeWidth="10"
+                                                                        fill="none"
+                                                                        strokeDasharray="283"
+                                                                        strokeDashoffset="75"
+                                                                    >
+                                                                        <animateTransform
+                                                                            attributeName="transform"
+                                                                            type="rotate"
+                                                                            from="0 50 50"
+                                                                            to="360 50 50"
+                                                                            dur="1s"
+                                                                            repeatCount="indefinite"
+                                                                        />
+                                                                    </circle>
+                                                                </svg>
+                                                            </div>
                                                         </form>
                                                     )}
 
@@ -673,44 +847,50 @@ const CoursePage = () => {
 
                                                     {/* Danh sách bài học */}
                                                     {expandedModule === module._id && (
-                                                        <ul>
+                                                        <ul className="lesson-list">
                                                             {module.lessons?.map((lesson, idx) => (
                                                                 <li key={lesson._id}>
-                                                                    <strong>{lesson.name}</strong> -{' '}
-                                                                    <span
-                                                                        className="download-lesson"
-                                                                        style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
-                                                                        onClick={() => handleDownloadLesson(lesson._id,lesson.name)} // Gọi hàm tải xuống
-                                                                    >
-                                                                        Tải xuống tài liệu
-                                                                    </span>
-                                                                    <span
-                                                                        className="delete-lesson"
-                                                                        onClick={(e) => {
-                                                                            e.stopPropagation();
-                                                                            Swal.fire({
-                                                                                title: 'Xác nhận xóa',
-                                                                                text: `Bạn có chắc chắn muốn xóa bài học "${lesson.name}" không?`,
-                                                                                icon: 'warning',
-                                                                                showCancelButton: true,
-                                                                                confirmButtonText: 'Xóa',
-                                                                                cancelButtonText: 'Hủy',
-                                                                            }).then((result) => {
-                                                                                if (result.isConfirmed) {
-                                                                                    handleDeleteLesson(lesson._id, module._id).then(() => {
-                                                                                        Swal.fire('Đã xóa!', 'Bài học đã được xóa thành công.', 'success').then(() => {
-                                                                                            window.location.reload();
+                                                                    <div className="details-lessson">
+                                                                        <strong>Tên tài liệu: {lesson.name}</strong>
+                                                                        <strong>Mô tả về bài học: {lesson.lesson_details}</strong>
+                                                                        <strong>Loại tệp: {lesson.type}</strong>
+                                                                    </div>
+                                                                    <div className="actions">
+                                                                        <span
+                                                                            className="download-lesson"
+                                                                            onClick={() => handleDownloadLesson(lesson._id, lesson.name)}
+                                                                        >
+                                                                            Tải xuống tài liệu
+                                                                        </span>
+                                                                        <span
+                                                                            className="delete-lesson"
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                Swal.fire({
+                                                                                    title: 'Xác nhận xóa',
+                                                                                    text: `Bạn có chắc chắn muốn xóa bài học "${lesson.name}" không?`,
+                                                                                    icon: 'warning',
+                                                                                    showCancelButton: true,
+                                                                                    confirmButtonText: 'Xóa',
+                                                                                    cancelButtonText: 'Hủy',
+                                                                                }).then((result) => {
+                                                                                    if (result.isConfirmed) {
+                                                                                        handleDeleteLesson(lesson._id, module._id).then(() => {
+                                                                                            Swal.fire('Đã xóa!', 'Bài học đã được xóa thành công.', 'success').then(() => {
+                                                                                                window.location.reload();
+                                                                                            });
                                                                                         });
-                                                                                    });
-                                                                                }
-                                                                            });
-                                                                        }}
-                                                                    >
-                                                                        ❌
-                                                                    </span>
+                                                                                    }
+                                                                                });
+                                                                            }}
+                                                                        >
+                                                                            ❌
+                                                                        </span>
+                                                                    </div>
                                                                 </li>
                                                             ))}
                                                         </ul>
+
                                                     )}
                                                 </li>
                                             ))}
@@ -718,15 +898,32 @@ const CoursePage = () => {
                                     )}
                                 </div>
                                 {/* Quiz Section */}
-                                <p>Số lượng Quiz: {courseData.quiz?.length || 0}</p>
+                                {/* <p>Số lượng Quiz: {courseData.quiz?.length || 0}</p> */}
                                 <div className="section">
                                     <h4 className="section-header" onClick={toggleQuizSection}>
-                                        Quiz
-                                        <span className={`arrow ${expandedQuizSection ? 'open' : ''}`}>
-                                            {expandedQuizSection ? '▼' : '▶'}
+                                        <span className="quiz-title">
+                                            <span className="title">
+                                                Quizzes
+                                            </span>
+                                            <span className={`arrow ${expandedQuizSection ? 'open' : ''}`}>
+                                                {expandedQuizSection ? '▼' : '▶'}
+                                            </span>
                                         </span>
+
+                                        {/* Nút hình chuông */}
                                         <button
-                                            className="add-quiz-button"
+                                            className="quiz-bell-button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleBellClick();
+                                            }}
+                                        >
+                                            🔔
+                                        </button>
+
+                                        {/* Nút thêm quiz */}
+                                        <button
+                                            className="quiz-add-button"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 toggleAddQuizForm();
@@ -868,56 +1065,78 @@ const CoursePage = () => {
 
                             </>
                         )}
-
                         {activeTab === 'members' && (
-                            <div>
-                                <h4>Danh sách thành viên</h4>
+                            <div className="members-tab">
                                 {loadingStudents ? (
                                     <p>Loading students...</p>
                                 ) : (
-                                    <div className="students-grid">
-                                        {students.map((student) => (
-                                            <div className="student-card" key={student._id}>
-                                                <h5>{student.user?.name || "Unknown"}</h5>
-                                                <p>{student.user?.email || "No email"}</p>
-                                            </div>
-                                        ))}
-                                    </div>
+                                    <>
+                                        <div className="students-grid">
+                                            {students.map((student) => (
+                                                <div className="student-card" key={student._id}>
+                                                    <h5>{student.user?.name || "Unknown"}</h5>
+                                                    <p>{student.user?.email || "No email"}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className="pagination-controls">
+                                            <button
+                                                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                                                disabled={currentPage === 1}
+                                                className="page-button"
+                                            >
+                                                Previous
+                                            </button>
+
+                                            {groupStart > 1 && (
+                                                <button
+                                                    onClick={() => setCurrentPage(groupStart - 1)}
+                                                    className="page-button"
+                                                >
+                                                    ...
+                                                </button>
+                                            )}
+
+                                            {Array.from({ length: groupEnd - groupStart + 1 }, (_, index) => {
+                                                const page = groupStart + index;
+                                                return (
+                                                    <button
+                                                        key={page}
+                                                        onClick={() => setCurrentPage(page)}
+                                                        className={`page-button ${currentPage === page ? "active" : ""}`}
+                                                    >
+                                                        {page}
+                                                    </button>
+                                                );
+                                            })}
+
+                                            {groupEnd < totalPages && (
+                                                <button
+                                                    onClick={() => setCurrentPage(groupEnd + 1)}
+                                                    className="page-button"
+                                                >
+                                                    ...
+                                                </button>
+                                            )}
+
+                                            <button
+                                                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                                                disabled={currentPage === totalPages}
+                                                className="page-button"
+                                            >
+                                                Next
+                                            </button>
+                                        </div>
+                                    </>
                                 )}
                             </div>
                         )}
-                        {activeTab === 'progress' && (
-                            <div>
-                                <h4>Tiến độ học tập</h4>
-                                {/* {loadingProgress ? (
-                                    <p>Loading progress...</p>
-                                ) : quizProgress ? (
-                                    <div>
-                                        <h5>{quizProgress.quizName}</h5>
-                                        <ul>
-                                            {quizProgress.studentProgress.map((student, index) => (
-                                                <li key={index}>
-                                                    <p><strong>{student.student}</strong></p>
-                                                    <p>Email: {student.email}</p>
-                                                    <p>Score: {student.scoreAchieved} / {quizProgress.quizId}</p>
-                                                    <p>{student.checkPassed ? 'Passed' : 'Not Passed'}</p>
-                                                    <p>Attempted on: {student.attemptDate || 'N/A'}</p>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                ) : (
-                                    <p>No progress data available.</p>
-                                )} */}
-                            </div>
-                        )}
-
-
-
                     </div>
+
                 </div>
             </div>
-        </div>
+
+        </div >
     );
 };
 

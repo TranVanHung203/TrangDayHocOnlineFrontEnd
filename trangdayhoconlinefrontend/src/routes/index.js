@@ -1,10 +1,11 @@
 import HomePage from "../pages/HomePage/HomePage"
-import CoursePage from "../pages/CoursePage/CoursePage"
+import CoursePage from "../pages/TeacherPage/CoursePage"
 import CreateCourse from "../pages/TeacherPage/CreateCourse"
 import LoadEditCourse from "../pages/TeacherPage/EditCourse"
 import OverViewExamPage from "../pages/StudentPage/OverViewExamPage"
 import Quiz from "../pages/StudentPage/Quiz"
 import Timeline from "../pages/StudentPage/Timeline"
+import Progress from "../pages/TeacherPage/Progress"
 import CreateQuestionAndAnswer from "../pages/TeacherPage/CreateQuestionAndAnswer"
 export const routes = [
     {
@@ -12,7 +13,7 @@ export const routes = [
         page: HomePage
     },
     {
-        path: '/mycourses/coursepage/:courseId',
+        path: '/mycourses/lecturer/:courseId',
         page: CoursePage
     },
     {
@@ -40,7 +41,10 @@ export const routes = [
         path: '/QuestionAndAnswer/:quizid',
         page: CreateQuestionAndAnswer
     },
-    
+    {
+        path: '/progress/:courseId',
+        page: Progress
+    },
 
 
 ]
