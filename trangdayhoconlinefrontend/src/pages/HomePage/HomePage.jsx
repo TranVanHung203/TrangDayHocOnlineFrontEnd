@@ -24,7 +24,11 @@ const CoursesOverview = () => {
   const fetchCourses = useCallback(async (page, limit) => {
     try {
       const data = await client.find({ page, limit });
-      setRole(data.role);
+      const clients = new RestClient();
+      const result = await clients.service('getRole').find();
+
+      setRole(result.role);
+      console.log(result.role)
       setTotalCourses(data.totalCourses);
       setTotalPages(data.totalPages);
 

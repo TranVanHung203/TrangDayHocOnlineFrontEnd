@@ -101,25 +101,41 @@ const CourseForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Kiểm tra các trường bắt buộc
     if (!validateFields()) {
-      return;
+      return; // Nếu có lỗi, dừng không gửi form
     }
 
     try {
-      console.log('Sending course data:', courseData);
-      toast.success('Khóa học đã được tạo thành công!');
+      const restClient = new RestClient();
+
+      // Gửi dữ liệu khóa học tới backend
+      const response = await restClient
+        .service('courses/') // Đặt đường dẫn API
+        .create({
+          courseName: courseData.courseName,
+          description: courseData.description,
+          startDate: courseData.startDate,
+          endDate: courseData.endDate,
+          emails: courseData.emails, // Gửi mảng email
+        });
+
+      // Nếu thành công, bạn có thể thông báo cho người dùng hoặc redirect họ đến trang khác
+      toast.success('Khóa học đã được tạo thành công!'); // Thông báo thành công
       setCourseData({
         courseName: '',
         description: '',
         startDate: '',
         endDate: '',
-        emails: [],
-      });
+        emails: [], // Reset mảng emails
+      }); // Reset form sau khi submit
     } catch (error) {
       console.error('Error creating course:', error);
-      toast.error('Có lỗi xảy ra khi tạo khóa học. Vui lòng thử lại.');
+      toast.error('Có lỗi xảy ra khi tạo khóa học. Vui lòng thử lại.'); // Thông báo lỗi khi có vấn đề
     }
   };
+
 
   return (
     <>
