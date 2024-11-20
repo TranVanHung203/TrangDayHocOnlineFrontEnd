@@ -148,20 +148,6 @@ const CoursePage = () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     const toggleModule = (moduleId) => {
         setExpandedModule((prevModule) => (prevModule === moduleId ? null : moduleId));
     };

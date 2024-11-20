@@ -1,6 +1,5 @@
 import HomePage from "../pages/HomePage/HomePage"
 import CoursePage from "../pages/TeacherPage/CoursePage"
-import CoursePageStudent from "../pages/StudentPage/CoursePageStudent"
 import CreateCourse from "../pages/TeacherPage/CreateCourse"
 import LoadEditCourse from "../pages/TeacherPage/EditCourse"
 import OverViewExamPage from "../pages/StudentPage/OverViewExamPage"
@@ -23,7 +22,7 @@ export const routes = [
     },
     {
         path: '/mycourses/student/:courseId',
-        page: CoursePageStudent
+        page: CoursePageSt
     },
     {
         path: '/createcourse',
@@ -56,5 +55,9 @@ export const routes = [
     {
         path: '*', // Bắt mọi đường dẫn không khớp
         page: NotFoundPage
+    },
+    {
+        path: '/stprogress/:courseId',
+        page: STProgress
     }
 ];
