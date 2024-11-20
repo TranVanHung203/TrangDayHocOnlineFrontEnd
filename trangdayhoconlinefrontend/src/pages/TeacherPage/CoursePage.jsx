@@ -251,12 +251,13 @@ const CoursePage = () => {
         setIsEditingQuiz(true);
         setEditingQuizId(quiz._id);
 
-        // Hàm chuyển đổi ngày giờ sang định dạng phù hợp với <input type="datetime-local">
         const formatDateForInput = (dateString) => {
             // Chuyển đổi từ ISO string thành Date object
             const date = new Date(dateString);
 
+            // Trừ đi 7 tiếng
             date.setHours(date.getHours() - 7);
+
             // Lấy các phần ngày tháng năm và giờ phút
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0'); // tháng bắt đầu từ 0
@@ -267,6 +268,7 @@ const CoursePage = () => {
             // Trả về chuỗi theo định dạng yyyy-MM-ddTHH:mm
             return `${year}-${month}-${day}T${hours}:${minutes}`;
         };
+
 
         setNewQuiz({
             name: quiz.name,
@@ -850,35 +852,30 @@ const CoursePage = () => {
                                                         <ul className="lesson-list">
                                                             {module.lessons?.map((lesson, idx) => (
                                                                 <li key={lesson._id}>
-                                                                    <div className="details-lessson">
-                                                                        <strong>Tên tài liệu: {lesson.name}</strong>
-                                                                        <strong>Mô tả về bài học: {lesson.lesson_details}</strong>
-                                                                        <strong>Loại tệp: {lesson.type}</strong>
-                                                                    </div>
-                                                                    <div className="actions">
-                                                                        <span
-                                                                            className="download-lesson"
-                                                                            onClick={() => handleDownloadLesson(lesson._id, lesson.name)}
-                                                                        >
-                                                                            Tải xuống tài liệu
-                                                                        </span>
-                                                                        <span
-                                                                            className="delete-lesson"
-                                                                            onClick={(e) => {
-                                                                                e.stopPropagation();
-                                                                                Swal.fire({
-                                                                                    title: 'Xác nhận xóa',
-                                                                                    text: `Bạn có chắc chắn muốn xóa bài học "${lesson.name}" không?`,
-                                                                                    icon: 'warning',
-                                                                                    showCancelButton: true,
-                                                                                    confirmButtonText: 'Xóa',
-                                                                                    cancelButtonText: 'Hủy',
-                                                                                }).then((result) => {
-                                                                                    if (result.isConfirmed) {
-                                                                                        handleDeleteLesson(lesson._id, module._id).then(() => {
-                                                                                            Swal.fire('Đã xóa!', 'Bài học đã được xóa thành công.', 'success').then(() => {
-                                                                                                window.location.reload();
-                                                                                            });
+                                                                    <strong>{lesson.name}</strong> -{' '}
+                                                                    <span
+                                                                        className="download-lesson"
+                                                                        style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
+                                                                        onClick={() => handleDownloadLesson(lesson._id, lesson.name)} // Gọi hàm tải xuống
+                                                                    >
+                                                                        Tải xuống tài liệu
+                                                                    </span>
+                                                                    <span
+                                                                        className="delete-lesson"
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            Swal.fire({
+                                                                                title: 'Xác nhận xóa',
+                                                                                text: `Bạn có chắc chắn muốn xóa bài học "${lesson.name}" không?`,
+                                                                                icon: 'warning',
+                                                                                showCancelButton: true,
+                                                                                confirmButtonText: 'Xóa',
+                                                                                cancelButtonText: 'Hủy',
+                                                                            }).then((result) => {
+                                                                                if (result.isConfirmed) {
+                                                                                    handleDeleteLesson(lesson._id, module._id).then(() => {
+                                                                                        Swal.fire('Đã xóa!', 'Bài học đã được xóa thành công.', 'success').then(() => {
+                                                                                            window.location.reload();
                                                                                         });
                                                                                     }
                                                                                 });
@@ -902,9 +899,7 @@ const CoursePage = () => {
                                 <div className="section">
                                     <h4 className="section-header" onClick={toggleQuizSection}>
                                         <span className="quiz-title">
-                                            <span className="title">
-                                                Quizzes
-                                            </span>
+                                            Quiz
                                             <span className={`arrow ${expandedQuizSection ? 'open' : ''}`}>
                                                 {expandedQuizSection ? '▼' : '▶'}
                                             </span>
@@ -932,6 +927,11 @@ const CoursePage = () => {
                                             +
                                         </button>
                                     </h4>
+
+
+
+
+
                                     {showAddQuizForm && (
                                         <form className={`add-quiz-form ${isEditingQuiz ? 'edit-mode' : ''}`} onSubmit={(e) => e.preventDefault()}>
                                             <div>
