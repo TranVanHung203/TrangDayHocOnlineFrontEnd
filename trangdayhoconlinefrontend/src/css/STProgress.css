@@ -1,0 +1,75 @@
+/* Bảng Quiz */
+.quiz-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Các ô bảng */
+.quiz-table th,
+.quiz-table td {
+    border: 1px solid #ddd;
+    padding: 12px 15px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Thông tin tiêu đề bảng */
+.quiz-table th {
+    background-color: #e0e0e0;
+    font-weight: bold;
+    color: #333;
+    text-transform: uppercase;
+}
+
+/* Dòng chẵn bảng */
+.quiz-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Dòng khi hover qua bảng */
+.quiz-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Trạng thái Pass/Fail */
+.status-pass {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #4caf50;
+    color: #fff;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.status-fail {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #f44336;
+    color: #fff;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+/* Điều chỉnh cho các thiết bị di động */
+@media (max-width: 768px) {
+    .quiz-table {
+        font-size: 14px;
+    }
+
+    .quiz-table th,
+    .quiz-table td {
+        padding: 8px 10px;
+    }
+
+    .content h1 {
+        font-size: 24px;
+    }
+
+
+}
