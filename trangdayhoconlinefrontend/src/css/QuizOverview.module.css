@@ -1,0 +1,111 @@
+.quizOverviewContainer {
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(45deg, #0c4877, #1f6fa6);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.quizCard {
+  background-color: white;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 15px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  text-align: center;
+  color: #333;
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+.quizCard::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+  z-index: -1;
+}
+
+.quizTitle {
+  font-size: 2.5rem;
+  color: #0c4877;
+  margin-bottom: 20px;
+  font-weight: bold;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.quizInfo {
+  font-size: 1.2rem;
+  margin-bottom: 40px;
+  color: #555;
+}
+
+.quizInfo p {
+  margin: 10px 0;
+}
+
+.startBtn {
+  padding: 12px 30px;
+  font-size: 1.2rem;
+  background-color: #0c4877;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  margin-top: 20px;
+}
+
+.startBtn:hover {
+  background-color: #09476f;
+  transform: scale(1.05);
+}
+
+.startBtn.disabled {
+  background-color: #b0cbe3;
+  cursor: not-allowed;
+}
+
+.loading {
+  font-size: 1.5rem;
+  color: #888;
+  text-align: center;
+}
+
+.errorMessage {
+  color: #ff3333;
+  background-color: #ffcccc;
+  padding: 20px;
+  text-align: center;
+  font-size: 1.2rem;
+  border-radius: 8px;
+  margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.homeBtn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  background-color: #1f6fa6;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
