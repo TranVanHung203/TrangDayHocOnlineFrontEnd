@@ -34,7 +34,7 @@ class RestClient {
     async findById(id) {
         try {
             const url = new URL(`${this.baseUrl}/${this.path}/${id}`);
-            
+
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
@@ -128,7 +128,7 @@ class RestClient {
             console.error('Error fetching course data:', error);
         }
     }
-    async findCourseStudents(courseId, page = 1, limit = 10) {
+    async findCourseStudents(courseId, page = 1, limit = 15) {
         try {
             const url = new URL(`${this.baseUrl}/courses/students/${courseId}`);
             url.searchParams.append('page', page); url.searchParams.append('limit', limit);
@@ -247,7 +247,7 @@ class RestClient {
         }
     }
 
-    async downloadLesson(lessonId,name) {
+    async downloadLesson(lessonId, name) {
         try {
             const url = `${this.baseUrl}/lessons/download/${lessonId}`;
             const response = await fetch(url, {
@@ -332,9 +332,31 @@ class RestClient {
     }
 
 
-    async findQuizProgress(quizId) {
+
+
+    // Hàm lấy tất cả quiz của một khóa học
+    async getAllQuizzes(courseId) {
         try {
-            const url = `${this.baseUrl}/quizzes/progress/${quizId}`;
+            const url = new URL(`${this.baseUrl}/courses/quizzes/${courseId}`);
+
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching quizzes:', error);
+        }
+    }
+    async getStudentProgress(quizId, options = {}) {
+        try {
+            // Xây dựng URL với tham số query
+            const queryParams = new URLSearchParams(options).toString();
+            const url = `${this.baseUrl}/quizzes/progress/${quizId}?${queryParams}`;
+
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
@@ -344,16 +366,17 @@ class RestClient {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to fetch quiz progress');
+                throw new Error('Failed to fetch student progress');
             }
 
             return await response.json();
         } catch (error) {
-            console.error('Error fetching quiz progress:', error);
+            console.error('Error fetching student progress:', error);
             return { success: false, message: error.message };
         }
     }
-
 }
+
+
 
 export default RestClient;

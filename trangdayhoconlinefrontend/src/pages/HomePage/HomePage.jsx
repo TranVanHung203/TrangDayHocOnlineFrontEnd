@@ -56,9 +56,20 @@ const CoursesOverview = () => {
     course.tenKhoaHoc.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Hàm chuyển hướng đến trang chi tiết khóa học
-  const handleCourseClick = (maKhoaHoc) => {
-    navigate(`/mycourses/coursepage/${maKhoaHoc}`);
+  const handleCourseClick = async (maKhoaHoc) => {
+    try {
+      const client = new RestClient();
+      const result = await client.service('getRole').find(); // Gọi API lấy vai trò
+
+      if (result.role === 'Lecturer') {
+        navigate(`/mycourses/lecturer/${maKhoaHoc}`); // Chuyển hướng giảng viên
+      } else if (result.role === 'student') {
+        navigate(`/mycourses/student/${maKhoaHoc}`); // Chuyển hướng sinh viên
+      }
+    } catch (error) {
+      console.error('Error fetching user role:', error);
+
+    }
   };
 
   // Hàm chuyển hướng đến trang chỉnh sửa khóa học
