@@ -75,7 +75,7 @@ const CoursesOverview = () => {
   // Hàm chuyển hướng đến trang chỉnh sửa khóa học
   const handleEditClick = (maKhoaHoc, event) => {
     event.stopPropagation(); // Ngăn sự kiện click vào thẻ khóa học
-    navigate(`/updatecourses/load-course/${maKhoaHoc}`);
+    navigate(`/updatecourses/${maKhoaHoc}`);
   };
 
   return (

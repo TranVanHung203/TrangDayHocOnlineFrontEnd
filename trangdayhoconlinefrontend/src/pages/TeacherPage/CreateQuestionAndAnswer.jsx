@@ -174,8 +174,7 @@ const App = () => {
       await restClient.delete();
       toast.success('Câu hỏi đã được xóa thành công!');
   
-      // Quay lại trang đầu tiên
-      setCurrentPage(1);
+      window.location.reload();
     } catch (error) {
       toast.error('Không thể xóa câu hỏi, vui lòng thử lại!');
     }
