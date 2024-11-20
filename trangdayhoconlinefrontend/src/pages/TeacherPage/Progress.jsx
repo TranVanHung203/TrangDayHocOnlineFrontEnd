@@ -84,6 +84,10 @@ const Progress = () => {
         return <p style={{ color: 'red', textAlign: 'center' }}>Bạn không được phép truy cập.</p>;
     }
 
+    if (!isAuthorized) {
+        return <p style={{ color: 'red', textAlign: 'center' }}>Bạn không được phép truy cập.</p>;
+    }
+
     // Fetch tiến độ học tập của sinh viên theo quiz ID
     const fetchStudentProgress = async (quizId, page = 1, search = '') => {
         setProgressLoading(true);

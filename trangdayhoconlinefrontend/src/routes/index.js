@@ -1,5 +1,6 @@
 import HomePage from "../pages/HomePage/HomePage"
 import CoursePage from "../pages/TeacherPage/CoursePage"
+import CoursePageStudent from "../pages/StudentPage/CoursePageStudent"
 import CreateCourse from "../pages/TeacherPage/CreateCourse"
 import LoadEditCourse from "../pages/TeacherPage/EditCourse"
 import OverViewExamPage from "../pages/StudentPage/OverViewExamPage"
@@ -9,6 +10,8 @@ import Progress from "../pages/TeacherPage/Progress"
 import STProgress from "../pages/StudentPage/Progress"
 import CoursePageSt from "../pages/StudentPage/CoursePageStudent"
 import CreateQuestionAndAnswer from "../pages/TeacherPage/CreateQuestionAndAnswer"
+import NotFoundPage from "../pages/ErrorsPage/NotFoundPage";
+
 export const routes = [
     {
         path: '/mycourses',
@@ -20,17 +23,16 @@ export const routes = [
     },
     {
         path: '/mycourses/student/:courseId',
-        page: CoursePageSt
+        page: CoursePageStudent
     },
     {
         path: '/createcourse',
         page: CreateCourse
     },
     {
-        path: '/updatecourses/load-course/:courseId',  // Đường dẫn dynamic với :courseId
-        page: LoadEditCourse  // Giả sử bạn có trang UpdateCourse để xử lý cập nhật khóa học
+        path: '/updatecourses/:courseId',
+        page: LoadEditCourse
     },
-
     {
         path: '/quizzes/:quizid',
         page: OverViewExamPage
@@ -52,11 +54,7 @@ export const routes = [
         page: Progress
     },
     {
-        path: '/stprogress/:courseId',
-        page: STProgress
+        path: '*', // Bắt mọi đường dẫn không khớp
+        page: NotFoundPage
     }
-
-
-
-
-]
+];

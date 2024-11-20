@@ -24,6 +24,7 @@ const CoursePage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isAuthorized, setIsAuthorized] = useState(false); // Kiểm tra quyền truy cập
+    
 
 
     const fetchStudents = async (page = 1, limit = 10) => {
@@ -106,13 +107,13 @@ const CoursePage = () => {
                     text: response.message, // Sử dụng câu trả lời từ API
                     confirmButtonText: 'OK',
                 });
-            } else {
+            } else if(response?.message === "No assignments are expiring within the next 7 days.") {
                 // Failure notification using SweetAlert2
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: 'Something went wrong. Failed to send reminder.',
-                    confirmButtonText: 'Try Again',
+                    icon: 'success',
+                    title: 'Success!',
+                    text: response.message, // Sử dụng câu trả lời từ API
+                    confirmButtonText: 'OK',
                 });
             }
         } catch (error) {
@@ -637,6 +638,7 @@ const CoursePage = () => {
                             }}
                         >
                             <h3>Tiến độ học tập</h3>
+                            
                         </div>
                     </div>
 
