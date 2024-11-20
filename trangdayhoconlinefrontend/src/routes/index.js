@@ -6,6 +6,8 @@ import OverViewExamPage from "../pages/StudentPage/OverViewExamPage"
 import Quiz from "../pages/StudentPage/Quiz"
 import Timeline from "../pages/StudentPage/Timeline"
 import Progress from "../pages/TeacherPage/Progress"
+import STProgress from "../pages/StudentPage/Progress"
+import CoursePageSt from "../pages/StudentPage/CoursePageStudent"
 import CreateQuestionAndAnswer from "../pages/TeacherPage/CreateQuestionAndAnswer"
 export const routes = [
     {
@@ -15,6 +17,10 @@ export const routes = [
     {
         path: '/mycourses/lecturer/:courseId',
         page: CoursePage
+    },
+    {
+        path: '/mycourses/student/:courseId',
+        page: CoursePageSt
     },
     {
         path: '/createcourse',
@@ -45,6 +51,12 @@ export const routes = [
         path: '/progress/:courseId',
         page: Progress
     },
+    {
+        path: '/stprogress/:courseId',
+        page: STProgress
+    }
+
+
 
 
 ]

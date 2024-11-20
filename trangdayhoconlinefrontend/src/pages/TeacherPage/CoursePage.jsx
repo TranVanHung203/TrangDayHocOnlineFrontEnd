@@ -897,8 +897,7 @@ const CoursePage = () => {
                                         </ul>
                                     )}
                                 </div>
-                                {/* Quiz Section */}
-                                {/* <p>Số lượng Quiz: {courseData.quiz?.length || 0}</p> */}
+
                                 <div className="section">
                                     <h4 className="section-header" onClick={toggleQuizSection}>
                                         <span className="quiz-title">
@@ -1065,6 +1064,7 @@ const CoursePage = () => {
 
                             </>
                         )}
+
                         {activeTab === 'members' && (
                             <div className="members-tab">
                                 {loadingStudents ? (

@@ -70,7 +70,9 @@ const QuizOverview = () => {
 
   const currentDate = new Date();
   const startDeadlines = convertUTCToVN(quizData.start_deadline);
+  startDeadlines.setHours(startDeadlines.getHours() - 7);
   const endDeadlines = convertUTCToVN(quizData.end_deadline);
+  endDeadlines.setHours(endDeadlines.getHours() - 7);
   const isAvailable = currentDate.getTime() >= startDeadlines.getTime() && currentDate.getTime() <= endDeadlines.getTime();
 
   const handleGoHome = () => {

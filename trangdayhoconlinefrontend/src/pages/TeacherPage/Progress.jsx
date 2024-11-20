@@ -3,10 +3,12 @@ import { useParams } from 'react-router-dom';
 import RestClient from '../../client-api/rest-client.js';
 import HeaderTeacher from '../../components/Header/HeaderTeacher';
 import Swal from 'sweetalert2';
+import { toast, ToastContainer } from 'react-toastify'; // Import react-toastify
 import '../../css/Progress.css';
 
 const Progress = () => {
     const { courseId } = useParams(); // Lấy courseId từ URL
+    const [course, setCourse] = useState(null); // Khóa học
     const [quizzes, setQuizzes] = useState([]); // Danh sách quiz
     const [loading, setLoading] = useState(true); // Trạng thái loading
     const [expandedQuizId, setExpandedQuizId] = useState(null); // ID quiz đang được mở rộng
@@ -15,34 +17,72 @@ const Progress = () => {
     const [searchTerm, setSearchTerm] = useState(''); // Lưu trữ từ khóa tìm kiếm
     const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
     const [totalPages, setTotalPages] = useState(1); // Tổng số trang
-
+    const [isAuthorized, setIsAuthorized] = useState(false); // Kiểm tra quyền truy cập
+    const [courseLoading, setCourseLoading] = useState(true);
     const PAGE_GROUP_SIZE = 10; // Số lượng trang trong một nhóm
-
-    // Fetch danh sách quiz
     useEffect(() => {
-        const fetchQuizzes = async () => {
-            setLoading(true);
+        const fetchCourseData = async () => {
+            setCourseLoading(true);
             try {
                 const client = new RestClient();
-                const data = await client.getAllQuizzes(courseId);
+                const data = await client.findCourseById(courseId); // Lấy dữ liệu khóa học theo courseId
 
-                if (data && Array.isArray(data.quizzes)) {
-                    setQuizzes(data.quizzes);
+                if (data) {
+                    setCourse(data); // Cập nhật state với thông tin khóa học
                 } else {
-                    setQuizzes([]);
-                    Swal.fire('Thông báo', 'Không có quiz nào được tìm thấy.', 'info');
+                    Swal.fire('Thông báo', 'Không tìm thấy thông tin khóa học.', 'info');
+                }
+            } catch (error) {
+                console.error('Lỗi khi lấy thông tin khóa học:', error);
+                Swal.fire('Lỗi', 'Không thể tải dữ liệu khóa học. Vui lòng thử lại.', 'error');
+            } finally {
+                setCourseLoading(false);
+            }
+        };
+
+        fetchCourseData();
+    }, [courseId]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                // Gọi API để lấy role
+                const client = new RestClient();
+                const roleResult = await client.service('getRole').find();
+
+                if (roleResult.role === 'Lecturer') {
+                    setIsAuthorized(true); // Nếu role là Lecturer, cho phép truy cập
+
+                    // Sau khi xác nhận quyền truy cập, gọi API để lấy danh sách quizzes
+                    const client = new RestClient();
+                    const data = await client.getAllQuizzes(courseId);
+
+                    if (data && Array.isArray(data.quizzes)) {
+                        setQuizzes(data.quizzes);
+                    } else {
+                        setQuizzes([]);
+                        Swal.fire('Thông báo', 'Không có quiz nào được tìm thấy.', 'info');
+                    }
+                } else {
+                    setIsAuthorized(false);
+                    toast.error('Bạn không được phép truy cập.');
                 }
             } catch (error) {
                 setQuizzes([]);
-                Swal.fire('Lỗi', 'Không thể tải quiz. Vui lòng thử lại.', 'error');
-                console.error('Lỗi khi tải quizzes:', error);
+                Swal.fire('Lỗi', 'Không thể tải quiz hoặc kiểm tra quyền truy cập. Vui lòng thử lại.', 'error');
+                console.error('Lỗi khi tải dữ liệu:', error);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchQuizzes();
+        fetchData();
     }, [courseId]);
+    if (courseLoading) return <p>Đang tải dữ liệu...</p>;
+    if (!isAuthorized) {
+        return <p style={{ color: 'red', textAlign: 'center' }}>Bạn không được phép truy cập.</p>;
+    }
 
     // Fetch tiến độ học tập của sinh viên theo quiz ID
     const fetchStudentProgress = async (quizId, page = 1, search = '') => {
@@ -174,8 +214,15 @@ const Progress = () => {
     return (
         <div>
             <HeaderTeacher />
+            <div className="header-section">
+                <h1>{course ? course.name : 'Khóa học không xác định'}</h1>
+                <div className="dates">
+                    <p>Ngày bắt đầu: {course.start_day ? new Date(course.start_day).toLocaleDateString() : "N/A"}</p>
+                    <p>Ngày kết thúc: {course.end_day ? new Date(course.end_day).toLocaleDateString() : "N/A"}</p>
+                </div>
+            </div>
 
-            <h1 className="progress-title">Danh sách Quiz</h1>
+            <h1 className="progress-title">Tiến độ học tập</h1>
 
             {loading ? ( // Hiển thị trạng thái loading
                 <p>Đang tải dữ liệu...</p>
