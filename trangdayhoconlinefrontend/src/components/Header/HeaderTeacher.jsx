@@ -5,8 +5,7 @@ import logofacebook from '../../storage/logofacebook.jpg';
 
 const Header = () => {
   const handleLogout = () => {
-    // Thêm logic đăng xuất ở đây
-    console.log("Đăng xuất");
+    window.location.href = "/logout";  // Chuyển hướng đến trang /logout
   };
 
   return (

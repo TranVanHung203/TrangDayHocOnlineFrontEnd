@@ -2,10 +2,10 @@ import React, { useEffect, useState, useRef } from 'react';
 import RestClient from '../../client-api/rest-client.js';
 import '../../css/CoursePageStudent.css';
 import { useParams } from 'react-router-dom';
-import HeaderTeacher from '../../components/Header/HeaderTeacher.jsx';
+import HeaderStudent from '../../components/Header/HeaderStudent';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify'; // Import rseact-toastify
+import { toast, ToastContainer } from 'react-toastify'; // Import react-toastify
 
 
 const CoursePage = () => {
@@ -97,13 +97,13 @@ const CoursePage = () => {
             try {
                 const client = new RestClient();
                 const data = await client.findCourseById(courseId);
-                
+
                 if (data.error) {
                     window.location.href = "/notfound";
                 }
-    
+
                 console.log('Dữ liệu khóa học nèeeee:');
-               
+
                 setCourseData(data);
             } catch (error) {
                 console.error('Lỗi này nd3 đi po:', error);
@@ -113,10 +113,10 @@ const CoursePage = () => {
                 setLoading(false); // Dừng trạng thái loading
             }
         };
-    
+
         fetchCourseData();
     }, [courseId]);
-    
+
 
 
 
@@ -148,20 +148,6 @@ const CoursePage = () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     const toggleModule = (moduleId) => {
         setExpandedModule((prevModule) => (prevModule === moduleId ? null : moduleId));
     };
@@ -186,7 +172,7 @@ const CoursePage = () => {
     return (
         <div className="container">
             <div className="content">
-                <HeaderTeacher />
+                <HeaderStudent />
 
                 <div className="main-container">
                     <div className="header-section">
@@ -214,7 +200,7 @@ const CoursePage = () => {
                             className={`tab ${activeTab === 'progress' ? 'tab-active' : ''}`}
                             onClick={() => {
                                 handleTabClick('progress');
-                                navigate(`/progress/${courseId}`); // Điều hướng bằng React Router
+                                navigate(`/stprogress/${courseId}`); // Điều hướng bằng React Router
                             }}
                         >
                             <h3>Tiến độ học tập</h3>
@@ -260,9 +246,6 @@ const CoursePage = () => {
 
 
                                                     </div>
-
-
-
 
 
                                                     {/* Danh sách bài học */}
@@ -404,6 +387,9 @@ const CoursePage = () => {
                             </div>
                         )}
                     </div>
+
+
+
 
                 </div>
             </div>

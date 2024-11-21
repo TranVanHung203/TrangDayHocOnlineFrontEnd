@@ -18,10 +18,11 @@ const Progress = () => {
     const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
     const [totalPages, setTotalPages] = useState(1); // Tổng số trang
     const [isAuthorized, setIsAuthorized] = useState(false); // Kiểm tra quyền truy cập
-
+    const [courseLoading, setCourseLoading] = useState(true);
     const PAGE_GROUP_SIZE = 10; // Số lượng trang trong một nhóm
     useEffect(() => {
         const fetchCourseData = async () => {
+            setCourseLoading(true);
             try {
                 const client = new RestClient();
                 const data = await client.findCourseById(courseId); // Lấy dữ liệu khóa học theo courseId
@@ -34,6 +35,8 @@ const Progress = () => {
             } catch (error) {
                 console.error('Lỗi khi lấy thông tin khóa học:', error);
                 Swal.fire('Lỗi', 'Không thể tải dữ liệu khóa học. Vui lòng thử lại.', 'error');
+            } finally {
+                setCourseLoading(false);
             }
         };
 
@@ -76,6 +79,10 @@ const Progress = () => {
 
         fetchData();
     }, [courseId]);
+    if (courseLoading) return <p>Đang tải dữ liệu...</p>;
+    if (!isAuthorized) {
+        return <p style={{ color: 'red', textAlign: 'center' }}>Bạn không được phép truy cập.</p>;
+    }
 
     if (!isAuthorized) {
         return <p style={{ color: 'red', textAlign: 'center' }}>Bạn không được phép truy cập.</p>;
@@ -214,8 +221,8 @@ const Progress = () => {
             <div className="header-section">
                 <h1>{course ? course.name : 'Khóa học không xác định'}</h1>
                 <div className="dates">
-                <p>Ngày bắt đầu: {course.start_day ? new Date(course.start_day).toLocaleDateString() : "N/A"}</p>
-                <p>Ngày kết thúc: {course.end_day ? new Date(course.end_day).toLocaleDateString() : "N/A"}</p>
+                    <p>Ngày bắt đầu: {course.start_day ? new Date(course.start_day).toLocaleDateString() : "N/A"}</p>
+                    <p>Ngày kết thúc: {course.end_day ? new Date(course.end_day).toLocaleDateString() : "N/A"}</p>
                 </div>
             </div>
 

@@ -128,6 +128,22 @@ class RestClient {
             console.error('Error fetching course data:', error);
         }
     }
+    async getCourseByIdForStudent(courseId) {
+
+        try {
+            const url = `${this.baseUrl}/courses/${courseId}/student`;
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include'
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching course data:', error);
+        }
+    }
     async findCourseStudents(courseId, page = 1, limit = 15) {
         try {
             const url = new URL(`${this.baseUrl}/courses/students/${courseId}`);
@@ -375,6 +391,30 @@ class RestClient {
             return { success: false, message: error.message };
         }
     }
+
+    async getQuizzesForStudent(courseId) {
+        try {
+            const url = `${this.baseUrl}/courses/${courseId}/progress`;
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include', // Bao gồm cookie (nếu có)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch quizzes for student: ${response.statusText}`);
+            }
+
+            return await response.json(); // Trả về kết quả từ server
+        } catch (error) {
+            console.error('Error fetching quizzes for student:', error);
+            return { success: false, message: error.message };
+        }
+    }
+
+
 }
 
 
