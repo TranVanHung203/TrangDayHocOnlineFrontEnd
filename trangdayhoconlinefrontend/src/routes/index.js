@@ -14,8 +14,10 @@ import RegisterPage from "../pages/AuthPage/RegisterPage";
 import LoginPage from "../pages/AuthPage/LoginPage";
 import LogOut from "../pages/AuthPage/LogOut"
 import ResetPasswordPage from "../pages/AuthPage/ResetPasswordPage";
-import Cookies from "js-cookie";
-
+import AdminPage from '../pages/AdminPage/AdminPage'
+import AdminStudent from '../pages/AdminPage/AdminStudent'
+import AdminLecturer from '../pages/AdminPage/AdminLecturer'
+import Admin from '../pages/AdminPage/Admin'
 // Kiểm tra trạng thái đăng nhập
 export const isLoggedIn = () => {
     const userid = localStorage.getItem("userid");
@@ -109,6 +111,22 @@ export const routes = [
     {
         path: "/logout",
         page: LogOut, 
+    },
+    {
+        path: "/admin",
+        page: AdminPage,
+    },
+    {
+        path: "/admin/student",
+        page: AdminStudent,
+    },
+    {
+        path: "/admin/lecturer",
+        page: AdminLecturer,
+    },
+    {
+        path: "/admin/admins",
+        page: Admin,
     },
 ];
 
