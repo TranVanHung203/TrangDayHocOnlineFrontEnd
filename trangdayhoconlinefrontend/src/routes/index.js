@@ -18,9 +18,8 @@ import Cookies from "js-cookie";
 
 // Kiểm tra trạng thái đăng nhập
 export const isLoggedIn = () => {
-    const token = Cookies.get("access_token"); // Đọc cookie với key là 'access_token'
-    console.log(token)
-    return !!token; // Trả về true nếu token tồn tại
+    const userid = localStorage.getItem("userid");
+    return userid; // Trả về true nếu token tồn tại
 };
 
 // AuthGuard: Bảo vệ route yêu cầu đăng nhập
@@ -109,12 +108,7 @@ export const routes = [
     },
     {
         path: "/logout",
-        page: LogOut, // Trang lỗi
+        page: LogOut, 
     },
 ];
 
-// Hàm logout
-export const logout = () => {
-    Cookies.remove("access_token"); // Xóa cookie access_token
-    window.location.href = "/login"; // Chuyển hướng đến trang đăng nhập
-};
