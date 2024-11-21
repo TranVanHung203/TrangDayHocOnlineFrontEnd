@@ -67,7 +67,7 @@ const CoursesOverview = () => {
 
       if (result.role === 'Lecturer') {
         navigate(`/mycourses/lecturer/${maKhoaHoc}`); // Chuyển hướng giảng viên
-      } else if (result.role === 'student') {
+      } else if (result.role === 'Student') {
         navigate(`/mycourses/student/${maKhoaHoc}`); // Chuyển hướng sinh viên
       }
     } catch (error) {
