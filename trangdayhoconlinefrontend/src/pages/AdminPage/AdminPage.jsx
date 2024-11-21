@@ -15,7 +15,9 @@ const AdminPage = () => {
                 </Menu>
             </Sidebar>
 
-            <Outlet />
+            <div className="content">
+                <Outlet /> {/* Đây là nơi các trang con sẽ được hiển thị */}
+            </div>
         </div>
     )
 }
