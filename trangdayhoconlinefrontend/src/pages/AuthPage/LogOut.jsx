@@ -1,6 +1,10 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RestClient from '../../client-api/rest-client.js';
+const removeLocalStorageItem = (key) => {
+    localStorage.removeItem(key);
+    console.log(`Removed item with key: ${key}`);
+};
 
 const Logout = () => {
     const navigate = useNavigate();
@@ -11,6 +15,8 @@ const Logout = () => {
             try {
                 await restClient.service('logout').find();
                 // Redirect to login page after successful logout
+                removeLocalStorageItem("userid"); 
+                removeLocalStorageItem("itemsPerPage"); 
                 navigate('/login');
             } catch (error) {
                 console.error('Logout failed:', error);

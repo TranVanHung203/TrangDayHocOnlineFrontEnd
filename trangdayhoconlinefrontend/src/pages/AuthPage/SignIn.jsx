@@ -101,7 +101,7 @@ export default function SignIn(props) {
             });
         console.log(response);
         if (response.EC === 0) {
-            localStorage.setItem("role", response.user.role);
+            localStorage.setItem("userid", response.user.userid);
             toast.success(response.EM);
             navigate('/mycourses');
         }
