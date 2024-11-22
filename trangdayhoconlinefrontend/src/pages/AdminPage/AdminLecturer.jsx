@@ -13,6 +13,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 import { toast, ToastContainer } from 'react-toastify'; // Import react-toastify
 import 'react-toastify/dist/ReactToastify.css'; // Import CSS cho ToastContainer
+import UpdateUser from './UpdateUser';
 
 function FormDialog() {
     const [open, setOpen] = React.useState(false);
@@ -117,10 +118,29 @@ const AdminLecturer = () => {
             const response = await restClient
                 .service(`admin/lecturer`)
                 .find();
+            console.log(response);
             setListLecturer(response);
         }
         fetchListLecturer();
-    })
+    }, [])
+
+    const deleteLecturer = async (idLecturer) => {
+        const restClient = new RestClient();
+        const response = await restClient
+            .service(`admin/${idLecturer}`)
+            .delete();
+        console.log(response);
+        if (response.EC === 0) {
+            const response1 = await restClient
+                .service(`admin/lecturer`)
+                .find();
+            setListLecturer(response1);
+            toast.success(response.EM);
+        }
+        else {
+            toast.error(response.EM);
+        }
+    }
 
     return (
         <div className='admin-lecturer-container'>
@@ -131,6 +151,7 @@ const AdminLecturer = () => {
                     <th>Tên</th>
                     <th>Email</th>
                     <th>Vai trò</th>
+                    <th>Xác thực email</th>
                 </tr>
                 {listLecturer && listLecturer.length > 0 && listLecturer.map((lecturer) => {
                     return (
@@ -138,6 +159,15 @@ const AdminLecturer = () => {
                             <td>{lecturer.name}</td>
                             <td>{lecturer.email}</td>
                             <td>{lecturer.role}</td>
+                            <td>{lecturer.is_verify_email ? "True" : "False"}</td>
+                            <td><UpdateUser
+                                id={lecturer._id}
+                                name={lecturer.name}
+                                email={lecturer.email}
+                                role={lecturer.role}
+                                verify_email={lecturer.is_verify_email} /></td>
+                            <td><button onClick={() => deleteLecturer(lecturer._id)}>XÓA GIẢNG VIÊN</button></td>
+
                         </tr>
                     )
                 })}

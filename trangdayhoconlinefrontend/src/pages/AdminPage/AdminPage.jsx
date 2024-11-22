@@ -1,10 +1,10 @@
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import './AdminPage.css';
 
 const AdminPage = () => {
     return (
-        <div className='admin-container'>
+        <div className='admin-page-container'>
             <Sidebar>
                 <Menu>
                     <SubMenu label="Người dùng">
@@ -15,9 +15,7 @@ const AdminPage = () => {
                 </Menu>
             </Sidebar>
 
-            <div className="content">
-                <Outlet /> {/* Đây là nơi các trang con sẽ được hiển thị */}
-            </div>
+            <Outlet /> {/* Đây là nơi các trang con sẽ được hiển thị */}
         </div>
     )
 }
