@@ -120,6 +120,10 @@ const Quiz = () => {
     });
   };
 
+  const removeLocalStorageItem = (key) => {
+    localStorage.removeItem(key);
+    console.log(`Removed item with key: ${key}`);
+  };
   const handleScrollToQuestion = (index) => {
     questionRefs.current[index].scrollIntoView({ behavior: 'smooth' });
   };
@@ -155,7 +159,10 @@ const Quiz = () => {
     try {
       console.log('Submitting data:', submissionData); // Log để kiểm tra
       await restClient.service(`quizzes/submit/${quizId}`).submitQuiz(submissionData);
-      localStorage.clear();
+
+      removeLocalStorageItem("quizEndTime");
+
+
       window.location.href = `http://localhost:3000/quizzes/${quizId}`;
     } catch (error) {
       console.error('Error submitting quiz:', error);

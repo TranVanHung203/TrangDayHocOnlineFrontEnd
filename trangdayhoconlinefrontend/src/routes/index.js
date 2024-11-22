@@ -9,7 +9,7 @@ import Progress from "../pages/TeacherPage/Progress";
 import STProgress from "../pages/StudentPage/Progress";
 import CoursePageSt from "../pages/StudentPage/CoursePageStudent";
 import CreateQuestionAndAnswer from "../pages/TeacherPage/CreateQuestionAndAnswer";
-import NotFoundPage from "../pages/ErrorsPage/NotFoundPage";
+
 import RegisterPage from "../pages/AuthPage/RegisterPage";
 import LoginPage from "../pages/AuthPage/LoginPage";
 import LogOut from "../pages/AuthPage/LogOut"
@@ -56,7 +56,7 @@ export const routes = [
     },
     {
         path: "/mycourses/student/:courseId",
-        page: AuthGuard(CoursePageSt), // Chỉ truy cập được khi đã đăng nhập
+        page: CoursePageSt, // Chỉ truy cập được khi đã đăng nhập
     },
     {
         path: "/createcourse",
@@ -102,13 +102,10 @@ export const routes = [
         path: "/reset-password/:reset_token",
         page: GuestGuard(ResetPasswordPage), // Chỉ truy cập được khi chưa đăng nhập
     },
-    {
-        path: "*",
-        page: AuthGuard(NotFoundPage), // Trang lỗi
-    },
+
     {
         path: "/logout",
-        page: LogOut, 
+        page: LogOut,
     },
 ];
 
