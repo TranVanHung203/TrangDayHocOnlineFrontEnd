@@ -14,8 +14,7 @@ import RegisterPage from "../pages/AuthPage/RegisterPage";
 import LoginPage from "../pages/AuthPage/LoginPage";
 import LogOut from "../pages/AuthPage/LogOut"
 import ResetPasswordPage from "../pages/AuthPage/ResetPasswordPage";
-import Cookies from "js-cookie";
-
+import VerifyEmail from '../pages/AuthPage/VerifyEmail'
 // Kiểm tra trạng thái đăng nhập
 export const isLoggedIn = () => {
     const userid = localStorage.getItem("userid");
@@ -37,7 +36,7 @@ export const AuthGuard = (Component) => {
 export const GuestGuard = (Component) => {
     return (props) => {
         if (isLoggedIn()) {
-            window.location.href = "/mycourses"; // Chuyển hướng đến trang chính nếu đã đăng nhập
+            window.location.href = "/logout"; // Chuyển hướng đến trang chính nếu đã đăng nhập
             return null;
         }
         return <Component {...props} />;
@@ -110,5 +109,10 @@ export const routes = [
         path: "/logout",
         page: LogOut, 
     },
+    {
+        path: "/verify-email/:verify_token",
+        page: VerifyEmail, 
+    },
+    
 ];
 

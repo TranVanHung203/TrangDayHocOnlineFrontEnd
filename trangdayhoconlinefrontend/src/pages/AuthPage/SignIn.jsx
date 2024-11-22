@@ -102,8 +102,16 @@ export default function SignIn(props) {
         console.log(response);
         if (response.EC === 0) {
             localStorage.setItem("userid", response.user.userid);
+            localStorage.setItem("role", response.user.role);
             toast.success(response.EM);
-            navigate('/mycourses');
+            if(response.user.role=='Admin')
+            {
+                navigate('/admin');
+            }else
+            {
+                navigate('/mycourses');
+            }
+           
         }
         else {
             toast.error(response.EM);
@@ -233,25 +241,7 @@ export default function SignIn(props) {
                         </Typography>
                     </Box>
                     <ForgotPassword open={open} handleClose={handleClose} />
-                    <Divider>or</Divider>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                        <Button
-                            fullWidth
-                            variant="outlined"
-                            onClick={() => alert('Sign in with Google')}
-                            startIcon={<GoogleIcon />}
-                        >
-                            Sign in with Google
-                        </Button>
-                        <Button
-                            fullWidth
-                            variant="outlined"
-                            onClick={() => alert('Sign in with Facebook')}
-                            startIcon={<FacebookIcon />}
-                        >
-                            Sign in with Facebook
-                        </Button>
-                    </Box>
+                    
                 </Card>
             </SignInContainer>
             <ToastContainer />
