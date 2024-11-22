@@ -20,16 +20,18 @@ function App() {
               )
             })
           }
-          <Route path='admin' element={<AdminPage />}>
-            <Route path='student' element={<AdminStudent />} />
-            <Route path='lecturer' element={<AdminLecturer />} />
-            <Route path='admins' element={<Admin />} />
+          {(localStorage.getItem("role") === 'Admin') && (
+            <Route path='admin' element={<AdminPage />}>
+              <Route path='student' element={<AdminStudent />} />
+              <Route path='lecturer' element={<AdminLecturer />} />
+              <Route path='admins' element={<Admin />} />
+            </Route>
+          )}
 
-          </Route>
         </Routes>
-        
+
       </Router>
-      
+
     </div>
   )
 
