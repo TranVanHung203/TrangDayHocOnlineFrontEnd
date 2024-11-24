@@ -152,6 +152,8 @@ const AdminLecturer = () => {
                     <th>Email</th>
                     <th>Vai trò</th>
                     <th>Xác thực email</th>
+                    <th>Sửa</th>
+                    <th>Xóa</th>
                 </tr>
                 {listLecturer && listLecturer.length > 0 && listLecturer.map((lecturer) => {
                     return (

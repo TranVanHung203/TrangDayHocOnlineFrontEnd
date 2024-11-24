@@ -44,6 +44,8 @@ const Admin = () => {
                     <th>Email</th>
                     <th>Vai trò</th>
                     <th>Xác thực email</th>
+                    <th>Sửa</th>
+                    <th>Xóa</th>
                 </tr>
                 {listAdmin && listAdmin.length > 0 && listAdmin.map((admin) => {
                     return (

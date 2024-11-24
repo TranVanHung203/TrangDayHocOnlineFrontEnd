@@ -15,6 +15,9 @@ function UpdateUser(props) {
 
     const [open, setOpen] = React.useState(false);
     const { id, name, email, role, verify_email } = props;
+    const [nameUser, setNameUser] = React.useState(name);
+    const [emailUser, setEmailUser] = React.useState(email);
+
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -67,8 +70,11 @@ function UpdateUser(props) {
                     <TextField
                         autoFocus
                         required
-                        placeholder={email}
                         margin="dense"
+                        value={emailUser}
+                        onChange={(event) => {
+                            setEmailUser(event.target.value);
+                        }}
                         id="email"
                         name="email"
                         label="Email"
@@ -79,8 +85,11 @@ function UpdateUser(props) {
                     <TextField
                         required
                         margin="dense"
-                        placeholder={name}
                         id="name"
+                        value={nameUser}
+                        onChange={(event) => {
+                            setNameUser(event.target.value);
+                        }}
                         name="name"
                         label="Tên giảng viên"
                         fullWidth
