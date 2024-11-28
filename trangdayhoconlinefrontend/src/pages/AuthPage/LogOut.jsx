@@ -17,6 +17,8 @@ const Logout = () => {
                 // Redirect to login page after successful logout
                 removeLocalStorageItem("userid"); 
                 removeLocalStorageItem("itemsPerPage"); 
+                removeLocalStorageItem("role"); 
+                removeLocalStorageItem("name"); 
                 navigate('/login');
             } catch (error) {
                 console.error('Logout failed:', error);

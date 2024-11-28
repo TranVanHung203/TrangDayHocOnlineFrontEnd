@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import "../../css/HeaderTeacher.css";
 import profilePic from '../../storage/logoute.png';
-import logofacebook from '../../storage/logofacebook.jpg';
+
 
 const Header = () => {
+  const [name, setName] = useState('');
+
+  useEffect(() => {
+    // Lấy giá trị 'name' từ localStorage
+    const storedName = localStorage.getItem('name');
+    if (storedName) {
+      setName(storedName);
+    }
+  }, []);
   const handleLogout = () => {
     window.location.href = "/logout";  // Chuyển hướng đến trang /logout
   };
@@ -11,11 +20,12 @@ const Header = () => {
   return (
     <header className="header">
       <div className="header-top">
-        <div className="icons-left">
-          <a href="#language" className="icon globe">🌍</a>
-          <a href="https://www.facebook.com/phihung633" target="_blank" rel="noopener noreferrer">
-            <img src={logofacebook} alt="Không tìm thấy logo" className="icon-image" />
-          </a>
+      <div className="icons-left">
+          {name ? (
+            <span className="welcome-message">Xin chào, <strong>{name}</strong>!</span>
+          ) : (
+            <span className="welcome-message">Xin chào!</span>
+          )}
         </div>
         <div className="ute-online-learning">
           UTE ONLINE LEARNING

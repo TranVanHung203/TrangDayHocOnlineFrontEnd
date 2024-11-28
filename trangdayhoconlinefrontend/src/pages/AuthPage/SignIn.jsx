@@ -103,6 +103,7 @@ export default function SignIn(props) {
         if (response.EC === 0) {
             localStorage.setItem("userid", response.user.userid);
             localStorage.setItem("role", response.user.role);
+            localStorage.setItem("name", response.user.name);
             toast.success(response.EM);
             if(response.user.role=='Admin')
             {
